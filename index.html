@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#17120e">
+    <meta name="description" content="قعدة — لعبة أسئلة وتحديات تجمعكم.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>لمة القهوه | اللعبة اللي تلمّ القعدة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="lobby-app.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="screen landing-screen" id="lobby-screen" aria-labelledby="lobby-title">
+        <button class="lobby-settings-button" id="open-settings-button" type="button" aria-label="إعدادات اللعبة" aria-haspopup="dialog">⚙</button>
+        <div class="landing-decoration" aria-hidden="true">
+          <span class="glow glow-one"></span><span class="glow glow-two"></span>
+          <span class="table-line"></span><span class="cup cup-one"></span><span class="cup cup-two"></span>
+          <span class="spark spark-one">✳</span><span class="spark spark-two">✦</span>
+        </div>
+        <div class="landing-content">
+          <p class="landing-crown" aria-hidden="true">♛</p>
+          <h1 class="landing-title" id="lobby-title">لمة القهوه</h1>
+          <p class="landing-tagline">سؤال .. تحدي .. صراحة</p>
+          <p class="landing-description">اللعبة اللي تلمّ قعدتك<br>أحلى من أي قعدة</p>
+          <div class="landing-actions">
+            <button class="primary-button" id="create-room-button" type="button"> ابدا اللعبة</button>
+            <button class="outline-button" id="show-join-button" type="button"><span>شوف حد يبعتلك الكود وادخل الغرفه</span><span class="button-symbol" aria-hidden="true">♧</span></button>
+            <button class="outline-button" id="how-to-play-button" type="button"><span> ازي نلعب اللعبة | ما هي لمة القهوه</span><span class="button-symbol" aria-hidden="true">؟</span></button>
+          </div>
+          <p class="landing-footer"><span aria-hidden="true">♛</span> قعدة دايمًا أحلى</p>
+        </div>
+        <p class="landing-credit" aria-hidden="true">Play Together<br>Laugh Forever</p>
+      </section>
+
+      <section class="screen mode-screen hidden" id="mode-screen" aria-labelledby="mode-title">
+        <button class="back-button mode-back-button" id="mode-back-button" type="button"><span aria-hidden="true">→</span></button>
+        <div class="mode-content">
+          <div class="mode-heading">
+            <span class="mode-heading-symbol" aria-hidden="true">♛</span>
+            <h1 id="mode-title">اختار نوع اللعب</h1>
+          </div>
+          <div class="mode-options">
+            <button class="mode-option selected" id="single-mode-button" type="button">
+              <span class="mode-icon" aria-hidden="true">♨</span>
+              <span class="mode-copy"><strong>موبايل واحد</strong><small>كلكم تلعبوا على نفس الجهاز</small></span>
+              <span class="mode-arrow" aria-hidden="true">←</span>
+            </button>
+            <button class="mode-option" id="room-mode-button" type="button">
+              <span class="mode-icon" aria-hidden="true">▣</span>
+              <span class="mode-copy"><strong>غرفة خاصة / أونلاين</strong><small>كل واحد من موبايله، من أي مكان<br>وادخلوا بكود الغرفة</small></span>
+              <span class="mode-arrow" aria-hidden="true">←</span>
+            </button>
+            <button class="mode-option" id="teams-mode-button" type="button">
+              <span class="mode-icon" aria-hidden="true">♟</span>
+              <span class="mode-copy"><strong>تحدي فريقين</strong><small>خمنوا، اجمعوا نقاط، والفائز يختار تحدي للخاسر</small></span>
+              <span class="mode-arrow" aria-hidden="true">←</span>
+            </button>
+          </div>
+          <div class="mode-decoration" aria-hidden="true"><span>♟</span><span>♟</span><span>♟</span></div>
+        </div>
+        <p class="mode-caption">اختيار النمط</p>
+      </section>
+
+      <section class="screen online-screen hidden" id="online-screen" aria-labelledby="online-title">
+        <button class="back-button mode-back-button" id="online-back-button" type="button"><span aria-hidden="true">→</span> أنماط اللعب</button>
+        <div class="form-card">
+          <p class="eyebrow">غرفتكم الخاصة</p>
+          <h1 id="online-title">العبوا مع بعض أونلاين</h1>
+          <p class="form-description">كل واحد يلعب من موبايله. أنشئوا غرفة وشاركوا الكود مع أصحابكم، أو ادخلوا بكود غرفة موجودة.</p>
+          <div class="online-actions">
+            <button class="primary-button" id="online-create-button" type="button">إنشاء غرفة ومشاركة الكود</button>
+            <button class="outline-button" id="online-join-button" type="button">معايا كود غرفة</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen local-screen hidden" id="local-screen" aria-labelledby="local-title">
+        <button class="back-button mode-back-button" id="local-back-button" type="button"><span aria-hidden="true">→</span> أنماط اللعب</button>
+        <div class="form-card">
+          <p class="eyebrow">القعدة بتلمّكم</p>
+          <h1 id="local-title">من هيلعب؟</h1>
+          <p class="form-description"> ضيف اسامي الناس الي هتلعب</p>
+          <ul class="player-list local-player-list" id="local-player-list" aria-live="polite"></ul>
+          <form id="local-player-form">
+            <label class="field-label" for="local-player-name">إضافة فرد لي القعده</label>
+            <div class="add-player-form">
+              <input class="text-input" id="local-player-name" maxlength="24" autocomplete="off" placeholder="اكتب اسم صاحبك..." required>
+              <button class="icon-button" type="submit" aria-label="إضافة فرد لي القعده">+</button>
+            </div>
+          </form>
+          <p class="helper-text" id="local-player-hint">ضيفوا اتنين على الأقل عشان تبدأ القعده.</p>
+          <fieldset class="category-picker">
+            <legend class="field-label">اختاروا مود العبه</legend>
+            <div class="category-options game-category-options">
+              <label class="category-option"><input type="radio" name="local-category" value="سؤال عام" checked><span class="category-icon" aria-hidden="true">؟</span><span>أسئلة عامة</span></label>
+              <label class="category-option"><input type="radio" name="local-category" value="معلومات"><span class="category-icon" aria-hidden="true">🧠</span><span>معلومات</span></label>
+              <label class="category-option"><input type="radio" name="local-category" value="ضحك"><span class="category-icon" aria-hidden="true">☻</span><span>اساله ضحك</span></label>
+              <label class="category-option"><input type="radio" name="local-category" value="تخمين"><span class="category-icon" aria-hidden="true">◎</span><span>تخمين افلام.اغاني. مسلسلات .مشهير .حاجة كتير</span></label>
+              <label class="category-option"><input type="radio" name="local-category" value="صراحة"><span class="category-icon" aria-hidden="true">♡</span><span>اسالة صراحه</span></label>
+              <label class="category-option"><input type="radio" name="local-category" value="تفكير"><span class="category-icon" aria-hidden="true">💡</span><span>تفكير وخداع</span></label>
+              <label class="category-option"><input type="radio" name="local-category" value="تحدي"><span class="category-icon" aria-hidden="true">✳</span><span>تحديات</span></label>
+            </div>
+          </fieldset>
+          <button class="primary-button form-submit" id="local-start-button" type="button" disabled> يلا بينا نبداء <span aria-hidden="true">←</span></button>
+          <p class="form-status" id="local-status" role="status"></p>
+        </div>
+      </section>
+
+      <section class="screen local-game-screen hidden" id="local-game-screen" aria-labelledby="local-game-title">
+        <button class="back-button mode-back-button" id="local-game-back-button" type="button"><span aria-hidden="true">→</span> اللاعبين</button>
+        <div class="round-card local-round-card">
+          <p class="eyebrow" id="local-round-label">جولة جديدة</p>
+          <h1 class="round-category" id="local-round-category"></h1>
+          <p class="round-turn" id="local-round-turn"></p>
+          <p class="round-prompt" id="local-round-prompt" aria-live="polite"></p>
+          <button class="outline-button game-answer-button hidden" id="local-show-answer-button" type="button">اكشفوا الإجابة المقترحة</button>
+          <p class="game-answer hidden" id="local-round-answer" aria-live="polite"></p>
+          <p class="form-status" id="local-game-status" role="status"></p>
+          <button class="primary-button room-action-button" id="local-next-button" type="button">السؤال اللي بعده <span aria-hidden="true">←</span></button>
+        </div>
+        <p class="game-footnote">خلي الموبايل في نص القعدة ☕</p>
+      </section>
+
+      <section class="screen form-screen hidden" id="teams-setup-screen" aria-labelledby="teams-title">
+        <button class="back-button" id="teams-setup-back-button" type="button">→ أنماط اللعب</button>
+        <div class="form-card team-setup-card">
+          <p class="eyebrow">تحدي فريقين</p>
+          <h1 id="teams-title">قسموا نفسكم فريقين</h1>
+          <p class="form-description">ضيفوا اللاعبين واختاروا لكل واحد فريق. كل فريق يخمن بالتناوب.</p>
+          <form id="team-player-form">
+            <label class="field-label" for="team-player-name">اسم اللاعب</label>
+            <div class="add-player-form">
+              <input class="text-input" id="team-player-name" maxlength="24" autocomplete="off" placeholder="اكتب اسم اللاعب..." required>
+              <button class="icon-button" type="submit" aria-label="إضافة لاعب للفريق">+</button>
+            </div>
+            <div class="team-assignment-picker" role="group" aria-label="اختار الفريق للاعب الجديد">
+              <label><input type="radio" name="new-player-team" value="0" checked><span>الفريق الأول</span></label>
+              <label><input type="radio" name="new-player-team" value="1"><span>الفريق الثاني</span></label>
+            </div>
+          </form>
+          <div class="team-rosters">
+            <section class="team-roster team-roster-one" aria-labelledby="team-one-roster-title">
+              <h2 id="team-one-roster-title">الفريق الأول <span id="team-one-count">٠</span></h2>
+              <ul id="team-one-players" aria-live="polite"></ul>
+            </section>
+            <section class="team-roster team-roster-two" aria-labelledby="team-two-roster-title">
+              <h2 id="team-two-roster-title">الفريق الثاني <span id="team-two-count">٠</span></h2>
+              <ul id="team-two-players" aria-live="polite"></ul>
+            </section>
+          </div>
+          <label class="field-label team-round-limit-label" for="team-round-limit">عدد جولات التخمين</label>
+          <select class="text-input" id="team-round-limit">
+            <option value="3">٣ جولات</option>
+            <option value="5" selected>٥ جولات</option>
+            <option value="7">٧ جولات</option>
+            <option value="10">١٠ جولات</option>
+          </select>
+          <p class="helper-text" id="team-setup-hint">ضيفوا لاعبًا واحدًا على الأقل لكل فريق.</p>
+          <button class="primary-button form-submit" id="team-start-button" type="button" disabled>ابدأوا التحدي ←</button>
+          <p class="form-status" id="team-setup-status" role="status"></p>
+        </div>
+      </section>
+
+      <section class="screen local-game-screen team-game-screen hidden" id="teams-game-screen" aria-labelledby="teams-game-title">
+        <button class="back-button mode-back-button" id="teams-game-back-button" type="button">→ تقسيم الفرق</button>
+        <div class="round-card local-round-card team-round-card">
+          <p class="eyebrow" id="team-round-label">جولة التخمين</p>
+          <h1 class="round-category" id="teams-game-title">تحدي فريقين</h1>
+          <div class="team-scoreboard" aria-label="النتيجة">
+            <div class="team-score team-score-one"><span>الفريق الأول</span><strong id="team-one-score">٠</strong></div>
+            <span class="team-score-separator">:</span>
+            <div class="team-score team-score-two"><span>الفريق الثاني</span><strong id="team-two-score">٠</strong></div>
+          </div>
+          <p class="round-turn" id="team-turn-label"></p>
+          <div class="team-wheel-wrap">
+            <span class="team-wheel-pointer" aria-hidden="true"></span>
+            <div class="team-wheel" id="team-wheel" role="img" aria-label="عجلة اختيار نوع الجولة"></div>
+          </div>
+          <p class="team-wheel-result" id="team-wheel-result" aria-live="polite">لفّوا العجلة لاختيار الجولة</p>
+          <button class="primary-button team-spin-button" id="team-spin-button" type="button">لفّوا العجلة</button>
+          <p class="round-prompt" id="team-round-prompt" aria-live="polite"></p>
+          <button class="outline-button team-show-answer-button hidden" id="team-show-answer-button" type="button">اكشفوا الإجابة</button>
+          <p class="team-answer hidden" id="team-answer" aria-live="polite"></p>
+          <p class="form-status" id="team-game-status" role="status"></p>
+          <button class="outline-button hidden" id="team-retry-card-button" type="button">حاولوا تحميل البطاقة تاني</button>
+          <div class="team-round-actions" id="team-round-actions">
+            <button class="primary-button" id="team-correct-button" type="button">خمنوا صح +١</button>
+            <button class="outline-button" id="team-skip-button" type="button">تخطي من غير نقطة</button>
+          </div>
+          <section class="team-match-result hidden" id="team-match-result" aria-live="polite">
+            <h2 id="team-winner-title"></h2>
+            <p id="team-winner-message"></p>
+            <button class="primary-button" id="team-draw-challenge-button" type="button">اسحبوا تحديًا للخاسر</button>
+            <p class="team-penalty-prompt" id="team-penalty-prompt"></p>
+            <button class="outline-button hidden" id="team-redraw-challenge-button" type="button">اسحبوا تحديًا تانيًا</button>
+          </section>
+          <button class="outline-button team-restart-button hidden" id="team-restart-button" type="button">العبوا جولة جديدة</button>
+        </div>
+        <p class="game-footnote">الفريق الفائز يختار التحدي للفريق الخاسر ☕</p>
+      </section>
+
+      <section class="screen form-screen hidden" id="host-screen" aria-labelledby="host-title">
+        <button class="back-button" id="host-back-button" type="button"><span aria-hidden="true">→</span> رجوع</button>
+        <div class="form-card">
+          <p class="eyebrow">إنت صاحب القعدة</p>
+          <h1 id="host-title">ابدأوا قعدتكم</h1>
+          <p class="form-description">اكتب اسمك واختار نمط اللعبة، وبعدها ابعت كود الغرفة لصحابك.</p>
+          <form id="host-form">
+            <label class="field-label" for="host-name">اسمك</label>
+            <input class="text-input" id="host-name" name="host-name" maxlength="24" autocomplete="nickname" placeholder="اكتب اسمك..." required>
+            <fieldset class="category-picker">
+              <legend class="field-label">اختار نمط اللعبة</legend>
+              <div class="category-options game-category-options">
+                <label class="category-option"><input type="radio" name="category" value="سؤال عام" checked><span class="category-icon" aria-hidden="true">؟</span><span>أسئلة عامة</span></label>
+                <label class="category-option"><input type="radio" name="category" value="معلومات"><span class="category-icon" aria-hidden="true">🧠</span><span>معلومات</span></label>
+                <label class="category-option"><input type="radio" name="category" value="ضحك"><span class="category-icon" aria-hidden="true">☻</span><span>مضحكة</span></label>
+                <label class="category-option"><input type="radio" name="category" value="تخمين"><span class="category-icon" aria-hidden="true">◎</span><span>تخمين</span></label>
+                <label class="category-option"><input type="radio" name="category" value="صراحة"><span class="category-icon" aria-hidden="true">♡</span><span>صراحة</span></label>
+                <label class="category-option"><input type="radio" name="category" value="تفكير"><span class="category-icon" aria-hidden="true">💡</span><span>تفكير وخداع</span></label>
+                <label class="category-option"><input type="radio" name="category" value="تحدي"><span class="category-icon" aria-hidden="true">✳</span><span>تحديات</span></label>
+              </div>
+            </fieldset>
+            <button class="primary-button form-submit" type="submit">إنشاء لمة <span aria-hidden="true">←</span></button>
+          </form>
+          <p class="form-status" id="host-status" role="status"></p>
+        </div>
+      </section>
+
+      <section class="screen form-screen hidden" id="join-screen" aria-labelledby="join-title">
+        <button class="back-button" id="join-back-button" type="button"><span aria-hidden="true">→</span> رجوع</button>
+        <div class="form-card">
+          <p class="eyebrow">القعدة مستنياك</p>
+          <h1 id="join-title">انضم للصحاب</h1>
+          <p class="form-description">أدخل رمز الغرفة أو امسح QR اللي شاركه صاحب القعدة.</p>
+          <form id="join-form">
+            <label class="field-label" for="room-code">كود الغرفة</label>
+            <input class="text-input room-code-input" id="room-code" name="room-code" maxlength="6" minlength="6" autocomplete="off" autocapitalize="characters" placeholder="مثال: Q7K2MX" required>
+            <label class="field-label" for="guest-name">اسمك</label>
+            <input class="text-input" id="guest-name" name="guest-name" maxlength="24" autocomplete="nickname" placeholder="اكتب اسمك..." required>
+            <button class="primary-button form-submit" type="submit">دخول القعدة <span aria-hidden="true">←</span></button>
+          </form>
+          <p class="form-status" id="join-status" role="status"></p>
+        </div>
+      </section>
+
+      <section class="screen room-screen hidden" id="room-screen" aria-labelledby="room-title">
+        <header class="room-header">
+          <button class="back-button" id="leave-room-button" type="button">مغادرة الغرفة</button>
+          <div class="room-code-card"><span class="room-label">كود الغرفة</span><strong id="room-code-display" dir="ltr"></strong><button class="copy-button" id="copy-code-button" type="button">نسخ</button></div>
+        </header>
+        <div class="room-content">
+          <section class="room-share-card hidden" id="room-share-card" aria-label="مشاركة الغرفة">
+            <div>
+              <strong>ابعت القعدة لصحابك</strong>
+              <span>امسح الكود عشان تنضم بسرعة</span>
+            </div>
+            <canvas id="room-qr" width="144" height="144" aria-label="رمز QR للانضمام إلى الغرفة"></canvas>
+            <p class="qr-error hidden" id="qr-error" role="status"></p>
+          </section>
+          <div class="room-title-block">
+            <p class="eyebrow" id="room-eyebrow">القعدة بتتلم</p>
+            <h1 id="room-title">أهلًا بالقعدة</h1>
+            <p class="room-message" id="room-message" role="status">مستنيين صحابكم ينضموا...</p>
+          </div>
+          <section class="members-card" aria-labelledby="members-title">
+            <div class="members-heading"><h2 id="members-title">اللاعبين</h2><span class="member-count" id="member-count">٠</span></div>
+            <ul class="member-list" id="member-list" aria-live="polite"></ul>
+          </section>
+          <section class="round-card hidden" id="round-card" aria-live="polite">
+            <p class="eyebrow" id="room-round-label">جولة جديدة</p><h2 class="round-category" id="round-category"></h2>
+            <p class="round-turn" id="round-turn"></p><p class="round-prompt" id="round-prompt"></p>
+            <button class="outline-button game-answer-button hidden" id="room-show-answer-button" type="button">اكشفوا الإجابة المقترحة</button>
+            <p class="game-answer hidden" id="room-round-answer" aria-live="polite"></p>
+          </section>
+          <button class="primary-button room-action-button" id="room-action-button" type="button">ابدأوا اللعب</button>
+          <p class="connection-status" id="room-status" role="status"></p>
+        </div>
+        <p class="game-footnote">خلي الموبايل في نص القعدة ☕</p>
+      </section>
+
+      <dialog class="help-dialog" id="help-dialog" aria-labelledby="help-title">
+        <form method="dialog"><button class="dialog-close" aria-label="إغلاق">×</button></form>
+        <p class="eyebrow"> بص يعم الموضوع سهل جدا!</p><h2 id="help-title">ازي نلعب؟</h2>
+        <ol>
+          <li>اختاروا اللعب من موبايل واحد من القعده أو اعملو غرفه خاصة يلعب فيها كل واحد من موبايله.</li>
+          <li>اختاروا موداللعبة: أسئلة عامة أو مضحكة، تخمين، صراحة، أو تحديات.</li>
+          <li>في الغرفة، ابعتوا الكود للمه؛ وبعدها صاحب الغرفة يبدأ الجولات ويسحب السؤال الاول.</li>
+        </ol>
+        <p class="dialog-note">اللعب مباشر، فخلي صاحب الغرفة فاتح اللعبة طول القعدة.</p>
+        <p class="dialog-note">بس كده يعم سهله يعني | وقت ممتع </p>
+      </dialog>
+
+      <dialog class="settings-dialog" id="settings-dialog" aria-labelledby="settings-title">
+        <form method="dialog" class="settings-dialog-close-form">
+          <button class="dialog-close" aria-label="إغلاق الإعدادات">×</button>
+        </form>
+        <p class="eyebrow">ظبطوا جو القعدة</p>
+        <h2 id="settings-title">الإعدادات</h2>
+
+        <fieldset class="settings-section">
+          <legend>شكل اللعبة</legend>
+          <div class="theme-options">
+            <label class="theme-option">
+              <input type="radio" name="theme" value="dark" checked>
+              <span aria-hidden="true">☾</span><span>داكن</span>
+            </label>
+            <label class="theme-option">
+              <input type="radio" name="theme" value="light">
+              <span aria-hidden="true">☀</span><span>فاتح</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="settings-section music-settings">
+          <legend>موسيقى القعدة</legend>
+          <label class="music-toggle-row" for="music-enabled">
+            <span><strong>موسيقى خلفية هادئة</strong><small>اللحن الأصلي يبدأ مع أول لمسة للعبة</small></span>
+            <input id="music-enabled" type="checkbox" role="switch">
+          </label>
+          <button class="music-play-button" id="music-play-button" type="button">▶ تشغيل الموسيقى</button>
+          <label class="volume-row" for="music-volume">
+            <span>مستوى الصوت</span>
+            <output id="music-volume-value" for="music-volume">٣٥٪</output>
+          </label>
+          <input id="music-volume" class="volume-slider" type="range" min="0" max="100" value="35">
+          <p class="settings-note">الموسيقى لحن بسيط من تأليف اللعبة، مش تسجيلات أغاني.</p>
+        </fieldset>
+        <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
+      </dialog>
+
+      <footer class="footer">
+        <span>صُنعت للقعدات الحلوة</span>
+        <span aria-hidden="true">✳</span>
+        <span>قعدة © ٢٠٢٦</span>
+      </footer>
+    </main>
+  </body>
+</html>
