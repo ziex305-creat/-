@@ -860,7 +860,7 @@ button {
 .form-screen > .back-button {
   position: absolute;
   top: 22px;
-  right: 0;
+  right: 68px;
 }
 
 .form-card,
@@ -958,6 +958,7 @@ button {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  padding-inline-end: 68px;
 }
 
 .room-code-card {
@@ -1452,7 +1453,7 @@ button {
 .mode-back-button {
   position: absolute;
   top: 22px;
-  right: 7px;
+  right: 68px;
 }
 
 .mode-content {
@@ -1581,7 +1582,7 @@ button {
 .local-game-screen > .back-button {
   position: absolute;
   top: 22px;
-  right: 0;
+  right: 68px;
 }
 
 .online-actions {
