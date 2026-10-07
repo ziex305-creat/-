@@ -589,7 +589,7 @@ button {
   justify-content: center;
   overflow: hidden;
   margin-inline: auto;
-  padding: 44px 34px 34px;
+  padding: max(84px, calc(env(safe-area-inset-top) + 64px)) 34px 34px;
   isolation: isolate;
   text-align: center;
   background:
@@ -958,7 +958,7 @@ button {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding-inline-end: 68px;
+  padding-inline-start: 68px;
 }
 
 .room-code-card {
