@@ -600,10 +600,10 @@ button {
 }
 
 .lobby-settings-button {
-  position: absolute;
-  z-index: 2;
+  position: fixed;
+  z-index: 20;
   top: max(18px, env(safe-area-inset-top));
-  right: 18px;
+  right: max(18px, env(safe-area-inset-right));
   display: grid;
   width: 40px;
   height: 40px;

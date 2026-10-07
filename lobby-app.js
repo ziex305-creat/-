@@ -11,6 +11,7 @@ const elements = {
   room: document.querySelector("#room-screen"),
   hostForm: document.querySelector("#host-form"),
   hostName: document.querySelector("#host-name"),
+  hostRoundLimit: document.querySelector("#host-round-limit"),
   hostStatus: document.querySelector("#host-status"),
   joinForm: document.querySelector("#join-form"),
   guestName: document.querySelector("#guest-name"),
@@ -34,6 +35,7 @@ const elements = {
   helpDialog: document.querySelector("#help-dialog"),
   settingsDialog: document.querySelector("#settings-dialog"),
   settingsStatus: document.querySelector("#settings-status"),
+  backgroundMusic: document.querySelector("#background-music"),
   musicPlayButton: document.querySelector("#music-play-button"),
   musicEnabled: document.querySelector("#music-enabled"),
   musicVolume: document.querySelector("#music-volume"),
@@ -43,6 +45,7 @@ const elements = {
   localPlayerList: document.querySelector("#local-player-list"),
   localPlayerHint: document.querySelector("#local-player-hint"),
   localStartButton: document.querySelector("#local-start-button"),
+  localRoundLimit: document.querySelector("#local-round-limit"),
   localStatus: document.querySelector("#local-status"),
   localRoundLabel: document.querySelector("#local-round-label"),
   localRoundCategory: document.querySelector("#local-round-category"),
@@ -52,6 +55,7 @@ const elements = {
   localRoundAnswer: document.querySelector("#local-round-answer"),
   localGameStatus: document.querySelector("#local-game-status"),
   localNextButton: document.querySelector("#local-next-button"),
+  localRestartButton: document.querySelector("#local-restart-button"),
   roomShowAnswerButton: document.querySelector("#room-show-answer-button"),
   roomRoundAnswer: document.querySelector("#room-round-answer"),
   teamsSetup: document.querySelector("#teams-setup-screen"),
@@ -117,14 +121,14 @@ let supabase;
 let room;
 let localCategory = "سؤال عام";
 let localRoundNumber = 0;
-let localLastCardId;
+let localRoundLimit = 5;
+let localSeenCardIds = new Set();
 let localCurrentCardCategory;
 let localCurrentAnswer;
 let teamRoundNumber = 0;
 let teamRoundLimit = 5;
 let teamScores = [0, 0];
-let teamLastGuessCardId;
-let teamLastChallengeCardId;
+let teamSeenCardIds = new Map();
 let teamTurnLocked = false;
 let teamMatchWinner;
 let teamWheelRotation = 0;
@@ -134,19 +138,8 @@ let hostReturnScreen;
 let joinReturnScreen;
 let presenceSynced = false;
 let presenceWaiters = [];
-let audioContext;
-let musicMaster;
-let musicTimer;
-let musicSuspendTimer;
-let chordIndex = 0;
-let autoMusicGestureHandled = false;
+let musicGestureHandled = false;
 const preferences = { theme: "dark", musicEnabled: true, musicVolume: 0.35 };
-const ambientChords = [
-  [130.81, 164.81, 196.0],
-  [110.0, 130.81, 164.81],
-  [87.31, 130.81, 174.61],
-  [98.0, 146.83, 196.0],
-];
 
 function showScreen(screen) {
   document.querySelectorAll(".screen").forEach((item) => item.classList.add("hidden"));
@@ -166,6 +159,7 @@ function renderMusicSettings() {
   elements.musicEnabled.checked = preferences.musicEnabled;
   elements.musicVolume.value = String(Math.round(preferences.musicVolume * 100));
   elements.musicVolumeValue.textContent = `${new Intl.NumberFormat("ar-EG").format(Math.round(preferences.musicVolume * 100))}٪`;
+  elements.musicPlayButton.textContent = preferences.musicEnabled ? "Ⅱ إيقاف الموسيقى" : "▶ تشغيل الموسيقى";
 }
 
 function savePreferences() {
@@ -194,108 +188,27 @@ function loadPreferences() {
   applyTheme();
   renderMusicSettings();
   if (preferences.musicEnabled) {
-    setFormStatus(elements.settingsStatus, "اللحن هيبدأ تلقائيًا مع أول ضغطة في اللعبة.", "info");
+    setFormStatus(elements.settingsStatus, "موسيقى قهوة بلدي هتبدأ مع أول تفاعل. تقدر توقفها أو تغيّر صوتها من الإعدادات.", "info");
   }
+  elements.backgroundMusic.volume = preferences.musicVolume;
 }
 
-function removeAutoMusicGestureListeners() {
-  document.removeEventListener("pointerdown", startMusicAfterGesture, true);
-  document.removeEventListener("keydown", startMusicAfterGesture, true);
-}
-
-function startMusicAfterGesture(event) {
-  if (!event.isTrusted || autoMusicGestureHandled || !preferences.musicEnabled
-    || (event.target instanceof Element && event.target.closest(".music-settings"))) return;
-  autoMusicGestureHandled = true;
-  removeAutoMusicGestureListeners();
-  updateMusicPlayback();
-}
-
-function scheduleAmbientChord() {
-  if (!audioContext || !musicMaster || audioContext.state !== "running") return;
-  const now = audioContext.currentTime;
-  const chord = ambientChords[chordIndex % ambientChords.length];
-  chordIndex += 1;
-
-  chord.forEach((frequency, index) => {
-    const oscillator = audioContext.createOscillator();
-    const voice = audioContext.createGain();
-    oscillator.type = index === 0 ? "sine" : "triangle";
-    oscillator.frequency.value = frequency;
-    oscillator.detune.value = index === 2 ? -4 : 3;
-    voice.gain.setValueAtTime(0.0001, now);
-    voice.gain.exponentialRampToValueAtTime(index === 0 ? 0.035 : 0.018, now + 1.2);
-    voice.gain.setTargetAtTime(0.0001, now + 3.9, 0.8);
-    oscillator.connect(voice);
-    voice.connect(musicMaster);
-    oscillator.start(now);
-    oscillator.stop(now + 7);
-  });
-}
-
-async function startAmbientMusic() {
-  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextClass) throw new Error("المتصفح مش بيدعم تشغيل الموسيقى.");
-
-  if (musicSuspendTimer) {
-    clearTimeout(musicSuspendTimer);
-    musicSuspendTimer = undefined;
-  }
-  if (!audioContext) {
-    try {
-      audioContext = new AudioContextClass();
-    } catch (error) {
-      throw new Error(`المتصفح منع تشغيل الموسيقى: ${error.message}`);
-    }
-    musicMaster = audioContext.createGain();
-    musicMaster.gain.value = 0;
-    musicMaster.connect(audioContext.destination);
-  }
-
+async function startBackgroundMusic() {
+  if (!preferences.musicEnabled) return;
   try {
-    await audioContext.resume();
+    await elements.backgroundMusic.play();
+    setFormStatus(elements.settingsStatus, "موسيقى القعدة شغالة.", "success");
   } catch (error) {
-    throw new Error(`اضغط «تشغيل الموسيقى» للسماح بالصوت: ${error.message}`);
-  }
-  if (audioContext.state !== "running") {
-    throw new Error("اضغط «تشغيل الموسيقى» لبدء الصوت من تفاعل مباشر.");
-  }
-  musicMaster.gain.cancelScheduledValues(audioContext.currentTime);
-  musicMaster.gain.setTargetAtTime(preferences.musicVolume, audioContext.currentTime, 0.25);
-  scheduleAmbientChord();
-  clearInterval(musicTimer);
-  musicTimer = setInterval(scheduleAmbientChord, 5200);
-  elements.musicPlayButton.textContent = "Ⅱ إيقاف الموسيقى";
-}
-
-function stopAmbientMusic() {
-  clearInterval(musicTimer);
-  musicTimer = undefined;
-  elements.musicPlayButton.textContent = "▶ تشغيل الموسيقى";
-  if (!audioContext || !musicMaster || audioContext.state === "closed") {
-    setFormStatus(elements.settingsStatus, "الموسيقى متوقفة.", "info");
-    return;
-  }
-  musicMaster.gain.cancelScheduledValues(audioContext.currentTime);
-  musicMaster.gain.setTargetAtTime(0, audioContext.currentTime, 0.2);
-  musicSuspendTimer = setTimeout(() => {
-    if (!preferences.musicEnabled && audioContext?.state === "running") audioContext.suspend();
-  }, 900);
-  setFormStatus(elements.settingsStatus, "الموسيقى متوقفة.", "info");
-}
-
-async function updateMusicPlayback() {
-  if (!preferences.musicEnabled) {
-    stopAmbientMusic();
-    return;
-  }
-
-  try {
-    await startAmbientMusic();
-    setFormStatus(elements.settingsStatus, "الموسيقى شغالة. تقدر تغيّر الصوت أو توقفها في أي وقت.", "success");
-  } catch (error) {
-    stopAmbientMusic();
     setFormStatus(elements.settingsStatus, `تعذر تشغيل الموسيقى: ${error.message}`, "error");
+  }
+}
+
+function updateMusicPlayback() {
+  if (preferences.musicEnabled) {
+    if (musicGestureHandled) startBackgroundMusic();
+  } else {
+    elements.backgroundMusic.pause();
+    setFormStatus(elements.settingsStatus, "الموسيقى متوقفة.", "info");
   }
 }
 
@@ -351,6 +264,21 @@ function categoryLabel(category) {
 
 function answerLabel(category) {
   return category === "معلومات" ? "الإجابة الصحيحة" : "إجابة مقترحة";
+}
+
+function pickRandomUnseenCard(cards, seenCardIds) {
+  let available = cards.filter((card) => !seenCardIds.has(card.id));
+  if (!available.length) {
+    const lastCardId = [...seenCardIds][seenCardIds.size - 1];
+    seenCardIds.clear();
+    available = cards.length > 1
+      ? cards.filter((card) => card.id !== lastCardId)
+      : cards;
+  }
+
+  const card = available[Math.floor(Math.random() * available.length)];
+  seenCardIds.add(card.id);
+  return card;
 }
 
 function revealCardAnswer(category, answer, answerElement, button) {
@@ -455,19 +383,21 @@ function addTeamPlayer(name, team) {
   renderTeamPlayers();
 }
 
-async function getRandomTeamCard(category, lastCardId) {
+async function getRandomTeamCard(category) {
   const { data, error } = await supabase
     .from("challenge_cards")
     .select("id, category, content, answer")
     .eq("category", category)
     .eq("is_active", true)
-    .limit(100);
+    .limit(1000);
   if (error) throw error;
   if (!data?.length) throw new Error(`مفيش بطاقات متاحة في فئة «${category}».`);
-  const available = data.length > 1 && lastCardId
-    ? data.filter((card) => card.id !== lastCardId)
-    : data;
-  return available[Math.floor(Math.random() * available.length)];
+  let seenCardIds = teamSeenCardIds.get(category);
+  if (!seenCardIds) {
+    seenCardIds = new Set();
+    teamSeenCardIds.set(category, seenCardIds);
+  }
+  return pickRandomUnseenCard(data, seenCardIds);
 }
 
 function prepareTeamRound() {
@@ -494,14 +424,8 @@ async function drawTeamRoundCard() {
   elements.teamRetryCardButton.classList.add("hidden");
   elements.teamRoundPrompt.textContent = "بنختار سوال الجولة...";
   setFormStatus(elements.teamGameStatus, "", "info");
-  const lastCardId = teamRoundCategory === "تحدي"
-    ? teamLastChallengeCardId
-    : teamLastGuessCardId;
-
   try {
-    const card = await getRandomTeamCard(teamRoundCategory, lastCardId);
-    if (teamRoundCategory === "تحدي") teamLastChallengeCardId = card.id;
-    else teamLastGuessCardId = card.id;
+    const card = await getRandomTeamCard(teamRoundCategory);
     teamCurrentAnswer = card.answer;
     elements.teamRoundPrompt.textContent = card.content;
     if (card.answer) {
@@ -596,8 +520,7 @@ async function drawTeamPenaltyChallenge() {
   elements.teamRedrawChallengeButton.disabled = true;
   setFormStatus(elements.teamGameStatus, "بنختار تحديًا...", "info");
   try {
-    const card = await getRandomTeamCard("تحدي", teamLastChallengeCardId);
-    teamLastChallengeCardId = card.id;
+    const card = await getRandomTeamCard("تحدي");
     const losingTeam = 1 - teamMatchWinner;
     elements.teamPenaltyPrompt.textContent = `تحدي الفريق ${losingTeam === 0 ? "الأول" : "الثاني"}: ${card.content}`;
     elements.teamRedrawChallengeButton.classList.remove("hidden");
@@ -614,8 +537,7 @@ async function startTeamMatch() {
   teamRoundLimit = Number(elements.teamRoundLimit.value);
   teamRoundNumber = 0;
   teamScores = [0, 0];
-  teamLastGuessCardId = undefined;
-  teamLastChallengeCardId = undefined;
+  teamSeenCardIds = new Map();
   teamWheelRotation = 0;
   teamMatchWinner = undefined;
   elements.teamRoundActions.classList.remove("hidden");
@@ -632,6 +554,10 @@ async function startTeamMatch() {
 }
 
 async function drawLocalCard() {
+  if (localRoundNumber >= localRoundLimit) {
+    finishLocalGame();
+    return;
+  }
   localCurrentAnswer = undefined;
   elements.localShowAnswerButton.classList.add("hidden");
   elements.localRoundAnswer.classList.add("hidden");
@@ -644,18 +570,14 @@ async function drawLocalCard() {
       .select("id, category, content, answer")
       .eq("category", localCategory)
       .eq("is_active", true)
-      .limit(100);
+      .limit(1000);
     if (error) throw error;
     if (!data?.length) throw new Error(`مفيش اساله متاح في فئة «${localCategory}».`);
 
-    const available = data.length > 1 && localLastCardId
-      ? data.filter((card) => card.id !== localLastCardId)
-      : data;
-    const card = available[Math.floor(Math.random() * available.length)];
+    const card = pickRandomUnseenCard(data, localSeenCardIds);
     const player = localPlayers[Math.floor(Math.random() * localPlayers.length)];
-    localLastCardId = card.id;
     localRoundNumber += 1;
-    elements.localRoundLabel.textContent = `الجولة ${new Intl.NumberFormat("ar-EG").format(localRoundNumber)}`;
+    elements.localRoundLabel.textContent = `الجولة ${new Intl.NumberFormat("ar-EG").format(localRoundNumber)} من ${new Intl.NumberFormat("ar-EG").format(localRoundLimit)}`;
     elements.localRoundCategory.textContent = categoryLabel(card.category);
     elements.localRoundTurn.textContent = `الدور على ${player}`;
     elements.localRoundPrompt.textContent = card.content;
@@ -664,11 +586,38 @@ async function drawLocalCard() {
     elements.localShowAnswerButton.textContent = `اكشفوا ${answerLabel(card.category)}`;
     elements.localShowAnswerButton.classList.toggle("hidden", !card.answer);
     setFormStatus(elements.localGameStatus, "", "info");
+    elements.localNextButton.textContent = localRoundNumber >= localRoundLimit
+      ? "إنهاء اللعبة"
+      : "السؤال اللي بعده ←";
   } catch (error) {
     setFormStatus(elements.localGameStatus, `معرفناش نجيب السؤال: ${error.message}`, "error");
   } finally {
     elements.localNextButton.disabled = false;
   }
+}
+
+function finishLocalGame() {
+  elements.localRoundLabel.textContent = "انتهت اللعبة";
+  elements.localRoundTurn.textContent = "";
+  elements.localNextButton.classList.add("hidden");
+  elements.localRestartButton.classList.remove("hidden");
+  setFormStatus(
+    elements.localGameStatus,
+    `خلصتوا ${new Intl.NumberFormat("ar-EG").format(localRoundLimit)} جولات. شكرًا على اللمة!`,
+    "success",
+  );
+}
+
+function startLocalGame() {
+  if (localPlayers.length < 2 || !supabase) return;
+  localRoundNumber = 0;
+  localRoundLimit = Number(elements.localRoundLimit.value);
+  localSeenCardIds = new Set();
+  elements.localNextButton.classList.remove("hidden");
+  elements.localRestartButton.classList.add("hidden");
+  elements.localNextButton.textContent = "السؤال اللي بعده ←";
+  showScreen(elements.localGame);
+  drawLocalCard();
 }
 
 function getPresenceMembers(channel) {
@@ -719,15 +668,23 @@ function renderRoomState() {
   if (!room) return;
   if (room.state.started && room.state.card) {
     elements.roundCard.classList.remove("hidden");
-    elements.roundLabel.textContent = `الجولة ${new Intl.NumberFormat("ar-EG").format(room.state.roundNumber)}`;
+    elements.roundLabel.textContent = `الجولة ${new Intl.NumberFormat("ar-EG").format(room.state.roundNumber)} من ${new Intl.NumberFormat("ar-EG").format(room.state.roundLimit)}`;
     elements.roundCategory.textContent = categoryLabel(room.state.category);
     elements.roundTurn.textContent = `الدور على ${room.state.turnPlayerName}`;
     elements.roundPrompt.textContent = room.state.card.content;
-    elements.roomRoundAnswer.classList.add("hidden");
-    elements.roomRoundAnswer.textContent = "";
+    const answerRevealed = room.state.answerRevealed === true && Boolean(room.state.card.answer);
+    elements.roomRoundAnswer.textContent = answerRevealed
+      ? `${answerLabel(room.state.category)}: ${room.state.card.answer}`
+      : "";
+    elements.roomRoundAnswer.classList.toggle("hidden", !answerRevealed);
     elements.roomShowAnswerButton.textContent = `اكشفوا ${answerLabel(room.state.category)}`;
-    elements.roomShowAnswerButton.classList.toggle("hidden", !room.state.card.answer);
-    elements.roomMessage.textContent = "قولوا إجاباتكم بصراحة وخلي الضحك يكمل!";
+    elements.roomShowAnswerButton.classList.toggle(
+      "hidden",
+      !room.isHost || !room.state.card.answer || answerRevealed,
+    );
+    elements.roomMessage.textContent = room.state.finished
+      ? "دي آخر جولة! بعد ما تخلصوا الإجابة تكون اللعبة خلصت."
+      : "قولوا إجاباتكم بصراحة وخلي الضحك يكمل!";
   } else {
     elements.roundCard.classList.add("hidden");
     elements.roomShowAnswerButton.classList.add("hidden");
@@ -744,6 +701,9 @@ function updateActionButton() {
     elements.actionButton.disabled = false;
   } else if (!room.isHost) {
     elements.actionButton.textContent = "مستنيين صاحب القعدة";
+    elements.actionButton.disabled = true;
+  } else if (room.state.finished) {
+    elements.actionButton.textContent = "انتهت الجولات";
     elements.actionButton.disabled = true;
   } else if (room.state.started) {
     elements.actionButton.innerHTML = 'السؤال اللي بعده <span aria-hidden="true">←</span>';
@@ -763,7 +723,28 @@ async function broadcast(event, payload = {}) {
 }
 
 async function publishRoomState() {
-  await broadcast("room-state", room.state);
+  const state = {
+    ...room.state,
+    card: room.state.card ? { ...room.state.card } : null,
+  };
+  if (state.card && !state.answerRevealed) delete state.card.answer;
+  await broadcast("room-state", state);
+}
+
+async function revealRoomAnswer() {
+  if (!room?.isHost || !room.state.card?.answer || room.state.answerRevealed) return;
+  room.state.answerRevealed = true;
+  elements.actionButton.disabled = true;
+  try {
+    await publishRoomState();
+    renderRoomState();
+  } catch (error) {
+    room.state.answerRevealed = false;
+    elements.roomStatus.textContent = `تعذر كشف الإجابة لباقي اللاعبين: ${error.message}`;
+    elements.roomStatus.dataset.state = "error";
+  } finally {
+    updateActionButton();
+  }
 }
 
 function handlePresenceSync(channel) {
@@ -864,7 +845,7 @@ async function renderRoomQr(code) {
   }
 }
 
-function enterRoom({ code, name, isHost, channel, category = "سؤال عام" }) {
+function enterRoom({ code, name, isHost, channel, category = "سؤال عام", roundLimit = 5 }) {
   const playerId = makeId();
   room = {
     channel,
@@ -873,8 +854,9 @@ function enterRoom({ code, name, isHost, channel, category = "سؤال عام" }
     isHost,
     playerId,
     members: [],
+    seenCardIds: new Map(),
     closed: false,
-    state: { started: false, category, roundNumber: 0, card: null },
+    state: { started: false, category, roundNumber: 0, roundLimit, finished: false, card: null },
   };
 
   elements.roomCodeDisplay.textContent = code;
@@ -891,7 +873,7 @@ function enterRoom({ code, name, isHost, channel, category = "سؤال عام" }
   return channel.track({ playerId, name, isHost });
 }
 
-async function createRoom(name, category) {
+async function createRoom(name, category, roundLimit) {
   if (!supabase) throw new Error("لسه مفيش اتصال بـ الغرفه.");
   setFormStatus(elements.hostStatus, "بنعمل غرفة جديدة...", "info");
 
@@ -911,7 +893,7 @@ async function createRoom(name, category) {
         continue;
       }
 
-      const trackResult = await enterRoom({ code, name, isHost: true, channel, category });
+      const trackResult = await enterRoom({ code, name, isHost: true, channel, category, roundLimit });
       if (trackResult?.status === "error") throw new Error("ما قدرناش نسجلك في الغرفة.");
       room.hostId = room.playerId;
       room.members = getPresenceMembers(channel);
@@ -953,8 +935,9 @@ async function joinRoom(code, name) {
       isHost: false,
       playerId: makeId(),
       members: existingMembers,
+      seenCardIds: new Map(),
       closed: false,
-      state: { started: false, category: "سؤال عام", roundNumber: 0, card: null },
+      state: { started: false, category: "سؤال عام", roundNumber: 0, roundLimit: 5, finished: false, card: null },
     };
     elements.roomCodeDisplay.textContent = code;
     elements.roomShareCard.classList.add("hidden");
@@ -980,7 +963,7 @@ async function joinRoom(code, name) {
 }
 
 async function drawNextRound() {
-  if (!room?.isHost || room.members.length < 2) return;
+  if (!room?.isHost || room.members.length < 2 || room.state.finished) return;
   elements.actionButton.disabled = true;
   elements.roomStatus.textContent = "بنحضّر الجولة...";
   elements.roomStatus.dataset.state = "info";
@@ -991,20 +974,25 @@ async function drawNextRound() {
       .select("id, category, content, answer")
       .eq("category", room.state.category)
       .eq("is_active", true)
-      .limit(100);
+      .limit(1000);
     if (error) throw error;
     if (!data?.length) throw new Error(`مفيش محتوى متاح في فئة «${room.state.category}».`);
 
-    const available = data.length > 1 && room.state.card
-      ? data.filter((card) => card.id !== room.state.card.id)
-      : data;
-    const card = available[Math.floor(Math.random() * available.length)];
+    let seenCardIds = room.seenCardIds.get(room.state.category);
+    if (!seenCardIds) {
+      seenCardIds = new Set();
+      room.seenCardIds.set(room.state.category, seenCardIds);
+    }
+    const card = pickRandomUnseenCard(data, seenCardIds);
     const player = room.members[Math.floor(Math.random() * room.members.length)];
     room.state = {
       started: true,
       category: card.category,
       roundNumber: room.state.roundNumber + 1,
+      roundLimit: room.state.roundLimit,
+      finished: room.state.roundNumber + 1 >= room.state.roundLimit,
       card,
+      answerRevealed: false,
       turnPlayerId: player.playerId,
       turnPlayerName: player.name,
     };
@@ -1088,20 +1076,14 @@ elements.teamRestartButton.addEventListener("click", startTeamMatch);
 document.querySelectorAll('input[name="local-category"]').forEach((input) => {
   input.addEventListener("change", () => { localCategory = input.value; });
 });
-elements.localStartButton.addEventListener("click", async () => {
-  if (localPlayers.length < 2 || !supabase) return;
-  localRoundNumber = 0;
-  localLastCardId = undefined;
-  showScreen(elements.localGame);
-  await drawLocalCard();
-});
+elements.localStartButton.addEventListener("click", startLocalGame);
 elements.localShowAnswerButton.addEventListener("click", () => {
   revealCardAnswer(localCurrentCardCategory, localCurrentAnswer, elements.localRoundAnswer, elements.localShowAnswerButton);
 });
 elements.localNextButton.addEventListener("click", drawLocalCard);
+elements.localRestartButton.addEventListener("click", startLocalGame);
 elements.roomShowAnswerButton.addEventListener("click", () => {
-  if (!room?.state.card) return;
-  revealCardAnswer(room.state.category, room.state.card.answer, elements.roomRoundAnswer, elements.roomShowAnswerButton);
+  revealRoomAnswer();
 });
 document.querySelector("#host-back-button").addEventListener("click", () => showScreen(hostReturnScreen || elements.lobby));
 document.querySelector("#join-back-button").addEventListener("click", () => showScreen(joinReturnScreen || elements.lobby));
@@ -1117,55 +1099,39 @@ document.querySelectorAll('input[name="theme"]').forEach((input) => {
     }
   });
 });
-elements.musicEnabled.addEventListener("change", async () => {
+elements.musicEnabled.addEventListener("change", () => {
   preferences.musicEnabled = elements.musicEnabled.checked;
-  savePreferences();
-  if (preferences.musicEnabled) {
-    autoMusicGestureHandled = true;
-    removeAutoMusicGestureListeners();
-  }
-  await updateMusicPlayback();
-});
-elements.musicPlayButton.addEventListener("click", async () => {
-  autoMusicGestureHandled = true;
-  removeAutoMusicGestureListeners();
-  if (preferences.musicEnabled && audioContext?.state === "running") {
-    preferences.musicEnabled = false;
-    renderMusicSettings();
-    savePreferences();
-    stopAmbientMusic();
-    return;
-  }
-
-  preferences.musicEnabled = true;
+  if (preferences.musicEnabled) musicGestureHandled = true;
   renderMusicSettings();
   savePreferences();
-  await updateMusicPlayback();
+  updateMusicPlayback();
+});
+elements.musicPlayButton.addEventListener("click", () => {
+  preferences.musicEnabled = !preferences.musicEnabled;
+  if (preferences.musicEnabled) musicGestureHandled = true;
+  renderMusicSettings();
+  savePreferences();
+  updateMusicPlayback();
 });
 elements.musicVolume.addEventListener("input", () => {
   preferences.musicVolume = Number(elements.musicVolume.value) / 100;
   renderMusicSettings();
-  if (musicMaster && audioContext?.state === "running" && preferences.musicEnabled) {
-    musicMaster.gain.setTargetAtTime(preferences.musicVolume, audioContext.currentTime, 0.12);
-  }
+  elements.backgroundMusic.volume = preferences.musicVolume;
   savePreferences();
 });
 
-document.addEventListener("pointerdown", startMusicAfterGesture, true);
-document.addEventListener("keydown", startMusicAfterGesture, true);
-document.addEventListener("visibilitychange", async () => {
-  if (!audioContext || !preferences.musicEnabled) return;
-  if (document.hidden && audioContext.state === "running") {
-    await audioContext.suspend();
-  } else if (!document.hidden && audioContext.state === "suspended") {
-    try {
-      await audioContext.resume();
-      scheduleAmbientChord();
-    } catch (error) {
-      setFormStatus(elements.settingsStatus, `تعذر استكمال الموسيقى: ${error.message}`, "error");
-    }
-  }
-});
+document.addEventListener("pointerdown", (event) => {
+  if (!event.isTrusted || musicGestureHandled || !preferences.musicEnabled
+    || (event.target instanceof Element && event.target.closest(".music-settings"))) return;
+  musicGestureHandled = true;
+  startBackgroundMusic();
+}, true);
+document.addEventListener("keydown", (event) => {
+  if (!event.isTrusted || musicGestureHandled || !preferences.musicEnabled
+    || (event.target instanceof Element && event.target.closest(".music-settings"))) return;
+  musicGestureHandled = true;
+  startBackgroundMusic();
+}, true);
 elements.leaveButton.addEventListener("click", leaveRoom);
 elements.actionButton.addEventListener("click", () => {
   if (room?.closed) {
@@ -1196,10 +1162,11 @@ elements.hostForm.addEventListener("submit", async (event) => {
   const name = normalizeName(elements.hostName.value);
   if (!name) return;
   const category = elements.hostForm.querySelector('input[name="category"]:checked').value;
+  const roundLimit = Number(elements.hostRoundLimit.value);
   const button = elements.hostForm.querySelector('button[type="submit"]');
   button.disabled = true;
   try {
-    await createRoom(name, category);
+    await createRoom(name, category, roundLimit);
   } catch (error) {
     setFormStatus(elements.hostStatus, error.message, "error");
   } finally {

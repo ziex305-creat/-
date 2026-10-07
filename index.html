@@ -15,8 +15,8 @@
   </head>
   <body>
     <main class="app-shell">
+      <button class="lobby-settings-button" id="open-settings-button" type="button" aria-label="إعدادات اللعبة" aria-haspopup="dialog">⚙</button>
       <section class="screen landing-screen" id="lobby-screen" aria-labelledby="lobby-title">
-        <button class="lobby-settings-button" id="open-settings-button" type="button" aria-label="إعدادات اللعبة" aria-haspopup="dialog">⚙</button>
         <div class="landing-decoration" aria-hidden="true">
           <span class="glow glow-one"></span><span class="glow glow-two"></span>
           <span class="table-line"></span><span class="cup cup-one"></span><span class="cup cup-two"></span>
@@ -94,6 +94,13 @@
             </div>
           </form>
           <p class="helper-text" id="local-player-hint">ضيفوا اتنين على الأقل عشان تبدأ القعده.</p>
+          <label class="field-label" for="local-round-limit">عدد الجولات</label>
+          <select class="text-input" id="local-round-limit" name="local-round-limit">
+            <option value="3">٣ جولات</option>
+            <option value="5" selected>٥ جولات</option>
+            <option value="7">٧ جولات</option>
+            <option value="10">١٠ جولات</option>
+          </select>
           <fieldset class="category-picker">
             <legend class="field-label">اختاروا مود العبه</legend>
             <div class="category-options game-category-options">
@@ -122,6 +129,7 @@
           <p class="game-answer hidden" id="local-round-answer" aria-live="polite"></p>
           <p class="form-status" id="local-game-status" role="status"></p>
           <button class="primary-button room-action-button" id="local-next-button" type="button">السؤال اللي بعده <span aria-hidden="true">←</span></button>
+          <button class="outline-button hidden" id="local-restart-button" type="button">العبوا من جديد</button>
         </div>
         <p class="game-footnote">خلي الموبايل في نص القعدة ☕</p>
       </section>
@@ -213,6 +221,13 @@
           <form id="host-form">
             <label class="field-label" for="host-name">اسمك</label>
             <input class="text-input" id="host-name" name="host-name" maxlength="24" autocomplete="nickname" placeholder="اكتب اسمك..." required>
+            <label class="field-label" for="host-round-limit">عدد الجولات</label>
+            <select class="text-input" id="host-round-limit" name="round-limit">
+              <option value="3">٣ جولات</option>
+              <option value="5" selected>٥ جولات</option>
+              <option value="7">٧ جولات</option>
+              <option value="10">١٠ جولات</option>
+            </select>
             <fieldset class="category-picker">
               <legend class="field-label">اختار نمط اللعبة</legend>
               <div class="category-options game-category-options">
@@ -289,7 +304,7 @@
         <ol>
           <li>اختاروا اللعب من موبايل واحد من القعده أو اعملو غرفه خاصة يلعب فيها كل واحد من موبايله.</li>
           <li>اختاروا موداللعبة: أسئلة عامة أو مضحكة، تخمين، صراحة، أو تحديات.</li>
-          <li>في الغرفة، ابعتوا الكود للمه؛ وبعدها صاحب الغرفة يبدأ الجولات ويسحب السؤال الاول.</li>
+          <li>في الغرفة، ابعتوا الكود للمة؛ صاحب الغرفة يبدأ الجولات ويسحب الأسئلة ويكشف الإجابة للجميع وقت ما يحب.</li>
         </ol>
         <p class="dialog-note">اللعب مباشر، فخلي صاحب الغرفة فاتح اللعبة طول القعدة.</p>
         <p class="dialog-note">بس كده يعم سهله يعني | وقت ممتع </p>
@@ -319,7 +334,7 @@
         <fieldset class="settings-section music-settings">
           <legend>موسيقى القعدة</legend>
           <label class="music-toggle-row" for="music-enabled">
-            <span><strong>موسيقى خلفية هادئة</strong><small>اللحن الأصلي يبدأ مع أول لمسة للعبة</small></span>
+            <span><strong>موسيقى قهوة بلدي</strong><small>تبدأ بعد أول لمسة للعبة</small></span>
             <input id="music-enabled" type="checkbox" role="switch">
           </label>
           <button class="music-play-button" id="music-play-button" type="button">▶ تشغيل الموسيقى</button>
@@ -328,10 +343,12 @@
             <output id="music-volume-value" for="music-volume">٣٥٪</output>
           </label>
           <input id="music-volume" class="volume-slider" type="range" min="0" max="100" value="35">
-          <p class="settings-note">الموسيقى لحن بسيط من تأليف اللعبة، مش تسجيلات أغاني.</p>
+          <p class="settings-note">موسيقى خلفية من ملف اللعبة.</p>
         </fieldset>
         <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
       </dialog>
+
+      <audio id="background-music" src="assets/qahwa-background.mp3" loop preload="metadata"></audio>
 
       <footer class="footer">
         <span>صُنعت للقعدات الحلوة</span>
