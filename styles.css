@@ -1483,7 +1483,7 @@ button {
 
 .mode-option {
   display: grid;
-  min-height: 94px;
+  min-height: 84px;
   grid-template-columns: 52px minmax(0, 1fr) 18px;
   align-items: center;
   gap: 12px;
@@ -1601,6 +1601,10 @@ button {
 
 .local-screen .form-card h1 {
   margin-bottom: 21px;
+}
+
+.local-screen.celebrity-setup #local-category-picker {
+  display: none;
 }
 
 .local-screen .add-player-form {
@@ -2128,6 +2132,247 @@ button {
 }
 
 .local-round-card .form-status:empty {
+  min-height: 0;
+  margin: 0;
+}
+
+.celebrity-round-card .round-category {
+  margin-bottom: 8px;
+}
+
+.celebrity-timer {
+  display: inline-flex;
+  min-width: 92px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 10px auto 2px;
+  padding: 7px 13px;
+  border: 1px solid #39c6dc;
+  border-radius: 999px;
+  color: #e8fbff;
+  background: #10252b;
+  box-shadow: 0 0 14px rgb(57 198 220 / 18%);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.celebrity-timer span {
+  color: #55d7ec;
+  font-size: 17px;
+}
+
+.celebrity-timer.is-urgent {
+  border-color: #ef665b;
+  color: #fff0ed;
+  background: #351a1a;
+  box-shadow: 0 0 16px rgb(239 102 91 / 28%);
+}
+
+.celebrity-timer.is-urgent span {
+  color: #ff8175;
+}
+
+.celebrity-portrait {
+  position: relative;
+  width: min(100%, 220px);
+  height: 188px;
+  overflow: hidden;
+  margin: 14px auto 10px;
+  border: 1px solid #5a493b;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 50% 14%, rgb(255 194 98 / 72%), transparent 33%),
+    linear-gradient(155deg, #563a27, #171614 72%);
+  box-shadow: inset 0 0 24px rgb(0 0 0 / 48%), 0 8px 22px rgb(0 0 0 / 22%);
+}
+
+.celebrity-portrait-hair,
+.celebrity-portrait-face,
+.celebrity-portrait-body {
+  position: absolute;
+  display: block;
+  transition: filter 220ms ease, opacity 220ms ease;
+}
+
+.celebrity-portrait-hair {
+  z-index: 1;
+  top: 22px;
+  left: 50%;
+  width: 83px;
+  height: 94px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #191513 15%, #37251b 75%);
+  transform: translateX(-50%);
+}
+
+.celebrity-portrait-face {
+  z-index: 2;
+  top: 41px;
+  left: 50%;
+  width: 62px;
+  height: 76px;
+  border: 1px solid rgb(255 221 176 / 45%);
+  border-radius: 46% 46% 48% 48%;
+  background:
+    radial-gradient(ellipse at 31% 48%, #35251c 0 3px, transparent 4px),
+    radial-gradient(ellipse at 69% 48%, #35251c 0 3px, transparent 4px),
+    radial-gradient(ellipse at 50% 65%, #915b42 0 5px, transparent 6px),
+    linear-gradient(100deg, #aa7455, #e0b18b 48%, #946147);
+  transform: translateX(-50%);
+}
+
+.celebrity-portrait-body {
+  z-index: 1;
+  bottom: -60px;
+  left: 50%;
+  width: 148px;
+  height: 132px;
+  border: 1px solid rgb(228 185 125 / 34%);
+  border-radius: 52% 52% 0 0;
+  background: linear-gradient(110deg, #172c32, #49636a 50%, #1b3037);
+  transform: translateX(-50%);
+}
+
+.celebrity-portrait-question {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff6e7;
+  background: rgb(14 18 20 / 37%);
+  font-size: 48px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.celebrity-portrait.celebrity-portrait-hidden .celebrity-portrait-hair,
+.celebrity-portrait.celebrity-portrait-hidden .celebrity-portrait-face,
+.celebrity-portrait.celebrity-portrait-hidden .celebrity-portrait-body {
+  filter: blur(14px);
+  opacity: 0.58;
+}
+
+.celebrity-portrait.celebrity-portrait-hidden .celebrity-portrait-question {
+  opacity: 1;
+}
+
+.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-easy .celebrity-portrait-hair,
+.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-easy .celebrity-portrait-face,
+.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-easy .celebrity-portrait-body {
+  filter: blur(0);
+}
+
+.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-medium .celebrity-portrait-hair,
+.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-medium .celebrity-portrait-face,
+.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-medium .celebrity-portrait-body {
+  filter: blur(3px);
+}
+
+.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-hard .celebrity-portrait-hair,
+.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-hard .celebrity-portrait-face,
+.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-hard .celebrity-portrait-body {
+  filter: blur(7px);
+}
+
+.celebrity-hint-count {
+  margin: 8px 0;
+  color: var(--gold-light);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.celebrity-hint-card {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface-light);
+}
+
+.celebrity-hint-card > span {
+  color: var(--gold-light);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.celebrity-hint-card p {
+  margin: 5px 0 9px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.celebrity-hint-card .outline-button {
+  min-height: 34px;
+  padding: 5px 12px;
+  font-size: 10px;
+}
+
+.celebrity-instruction {
+  max-width: 330px;
+  margin: 7px auto 11px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.celebrity-scoreboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 7px;
+  margin-top: 15px;
+}
+
+.celebrity-score {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 8px 9px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  font-size: 10px;
+}
+
+.celebrity-score span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.celebrity-score strong {
+  color: var(--gold-light);
+  font-size: 12px;
+}
+
+.celebrity-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.celebrity-actions #celebrity-start-turn-button,
+.celebrity-actions #celebrity-next-turn-button {
+  grid-column: 1 / -1;
+}
+
+.celebrity-actions .primary-button,
+.celebrity-actions .outline-button {
+  min-height: 43px;
+  padding-inline: 9px;
+  font-size: 10px;
+}
+
+.celebrity-round-card > .game-answer {
+  margin-block: 12px;
+}
+
+.celebrity-round-card > .form-status:empty {
   min-height: 0;
   margin: 0;
 }

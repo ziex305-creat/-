@@ -60,6 +60,11 @@
               <span class="mode-copy"><strong>تحدي فريقين</strong><small>خمنوا، اجمعوا نقاط، والفائز يختار تحدي للخاسر</small></span>
               <span class="mode-arrow" aria-hidden="true">←</span>
             </button>
+            <button class="mode-option" id="celebrity-mode-button" type="button">
+              <span class="mode-icon" aria-hidden="true">؟</span>
+              <span class="mode-copy"><strong>مين ده؟</strong><small>خمنوا المشهور من التلميحات واجمعوا النقاط</small></span>
+              <span class="mode-arrow" aria-hidden="true">←</span>
+            </button>
           </div>
           <div class="mode-decoration" aria-hidden="true"><span>♟</span><span>♟</span><span>♟</span></div>
         </div>
@@ -94,14 +99,22 @@
             </div>
           </form>
           <p class="helper-text" id="local-player-hint">ضيفوا اتنين على الأقل عشان تبدأ القعده.</p>
-          <label class="field-label" for="local-round-limit">عدد الجولات</label>
+          <label class="field-label" for="local-round-limit" id="local-round-limit-label">عدد الجولات</label>
           <select class="text-input" id="local-round-limit" name="local-round-limit">
             <option value="3">٣ جولات</option>
             <option value="5" selected>٥ جولات</option>
             <option value="7">٧ جولات</option>
             <option value="10">١٠ جولات</option>
           </select>
-          <fieldset class="category-picker">
+          <fieldset class="category-picker hidden" id="celebrity-difficulty-picker">
+            <legend class="field-label">اختاروا مستوى الصعوبة</legend>
+            <div class="category-options celebrity-difficulty-options">
+              <label class="category-option"><input type="radio" name="celebrity-difficulty" value="easy"><span class="category-icon" aria-hidden="true">☀</span><span>سهل</span></label>
+              <label class="category-option"><input type="radio" name="celebrity-difficulty" value="medium" checked><span class="category-icon" aria-hidden="true">◐</span><span>متوسط</span></label>
+              <label class="category-option"><input type="radio" name="celebrity-difficulty" value="hard"><span class="category-icon" aria-hidden="true">◌</span><span>صعب</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="category-picker" id="local-category-picker">
             <legend class="field-label">اختاروا مود العبه</legend>
             <div class="category-options game-category-options">
               <label class="category-option"><input type="radio" name="local-category" value="سؤال عام" checked><span class="category-icon" aria-hidden="true">؟</span><span>أسئلة عامة</span></label>
@@ -132,6 +145,43 @@
           <button class="outline-button hidden" id="local-restart-button" type="button">العبوا من جديد</button>
         </div>
         <p class="game-footnote">خلي الموبايل في نص القعدة ☕</p>
+      </section>
+
+      <section class="screen local-game-screen celebrity-game-screen hidden" id="celebrity-game-screen" aria-labelledby="celebrity-game-title">
+        <button class="back-button mode-back-button" id="celebrity-game-back-button" type="button"><span aria-hidden="true">→</span> اللاعبين</button>
+        <div class="round-card local-round-card celebrity-round-card">
+          <p class="eyebrow" id="celebrity-round-label">جولة جديدة</p>
+          <h1 class="round-category" id="celebrity-game-title">مين ده؟</h1>
+          <p class="round-turn" id="celebrity-turn"></p>
+          <div class="celebrity-timer" id="celebrity-timer" aria-label="الوقت المتبقي">
+            <span aria-hidden="true">◷</span>
+            <output id="celebrity-timer-value">٠١:٠٠</output>
+          </div>
+          <div class="celebrity-portrait celebrity-portrait-hidden" id="celebrity-portrait" aria-label="صورة مشهورة مخفية">
+            <span class="celebrity-portrait-hair" aria-hidden="true"></span>
+            <span class="celebrity-portrait-face" aria-hidden="true"></span>
+            <span class="celebrity-portrait-body" aria-hidden="true"></span>
+            <span class="celebrity-portrait-question" aria-hidden="true">؟</span>
+          </div>
+          <div class="celebrity-hint-card hidden" id="celebrity-hint-card">
+            <span>تلميح للفريق</span>
+            <p id="celebrity-hint" aria-live="polite"></p>
+            <button class="outline-button" id="celebrity-next-hint-button" type="button">تلميح كمان</button>
+          </div>
+          <p class="celebrity-hint-count" id="celebrity-hint-count"></p>
+          <p class="celebrity-instruction" id="celebrity-instruction">سلّموا الموبايل للاعب وخلوه على جبهته. الباقي يوصفوا الصورة من غير ما يقولوا الاسم!</p>
+          <div class="celebrity-scoreboard" id="celebrity-scoreboard" aria-label="النتيجة"></div>
+          <div class="celebrity-actions" id="celebrity-actions">
+            <button class="primary-button" id="celebrity-start-turn-button" type="button">اقلب الموبايل وابدأوا ٦٠ ثانية</button>
+            <button class="primary-button hidden" id="celebrity-correct-button" type="button">صح! +١</button>
+            <button class="outline-button hidden" id="celebrity-skip-button" type="button">تخطي ⏭</button>
+            <button class="primary-button hidden" id="celebrity-next-turn-button" type="button">مرروا الموبايل للاعب التالي ←</button>
+          </div>
+          <p class="game-answer hidden" id="celebrity-answer" aria-live="polite"></p>
+          <p class="form-status" id="celebrity-game-status" role="status"></p>
+          <button class="outline-button hidden" id="celebrity-restart-button" type="button">العبوا من جديد</button>
+        </div>
+        <p class="game-footnote">خمنوا أكبر عدد قبل ما يخلص الوقت ☕</p>
       </section>
 
       <section class="screen form-screen hidden" id="teams-setup-screen" aria-labelledby="teams-title">
@@ -303,7 +353,7 @@
         <p class="eyebrow"> بص يعم الموضوع سهل جدا!</p><h2 id="help-title">ازي نلعب؟</h2>
         <ol>
           <li>اختاروا اللعب من موبايل واحد من القعده أو اعملو غرفه خاصة يلعب فيها كل واحد من موبايله.</li>
-          <li>اختاروا موداللعبة: أسئلة عامة أو مضحكة، تخمين، صراحة، أو تحديات.</li>
+          <li>اختاروا مود اللعبة: أسئلة عامة أو مضحكة، تخمين، صراحة، تحديات، أو لعبة «مين ده؟».</li>
           <li>في الغرفة، ابعتوا الكود للمة؛ صاحب الغرفة يبدأ الجولات ويسحب الأسئلة ويكشف الإجابة للجميع وقت ما يحب.</li>
         </ol>
         <p class="dialog-note">اللعب مباشر، فخلي صاحب الغرفة فاتح اللعبة طول القعدة.</p>

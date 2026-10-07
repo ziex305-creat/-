@@ -46,6 +46,11 @@ const elements = {
   localPlayerHint: document.querySelector("#local-player-hint"),
   localStartButton: document.querySelector("#local-start-button"),
   localRoundLimit: document.querySelector("#local-round-limit"),
+  localRoundLimitLabel: document.querySelector("#local-round-limit-label"),
+  localCategoryPicker: document.querySelector("#local-category-picker"),
+  celebrityDifficultyPicker: document.querySelector("#celebrity-difficulty-picker"),
+  localTitle: document.querySelector("#local-title"),
+  localDescription: document.querySelector("#local-screen .form-description"),
   localStatus: document.querySelector("#local-status"),
   localRoundLabel: document.querySelector("#local-round-label"),
   localRoundCategory: document.querySelector("#local-round-category"),
@@ -56,6 +61,26 @@ const elements = {
   localGameStatus: document.querySelector("#local-game-status"),
   localNextButton: document.querySelector("#local-next-button"),
   localRestartButton: document.querySelector("#local-restart-button"),
+  celebrityGame: document.querySelector("#celebrity-game-screen"),
+  celebrityRoundLabel: document.querySelector("#celebrity-round-label"),
+  celebrityTurn: document.querySelector("#celebrity-turn"),
+  celebrityHintCount: document.querySelector("#celebrity-hint-count"),
+  celebrityInstruction: document.querySelector("#celebrity-instruction"),
+  celebrityPortrait: document.querySelector("#celebrity-portrait"),
+  celebrityTimer: document.querySelector("#celebrity-timer"),
+  celebrityTimerValue: document.querySelector("#celebrity-timer-value"),
+  celebrityHintCard: document.querySelector("#celebrity-hint-card"),
+  celebrityHint: document.querySelector("#celebrity-hint"),
+  celebrityNextHintButton: document.querySelector("#celebrity-next-hint-button"),
+  celebrityScoreboard: document.querySelector("#celebrity-scoreboard"),
+  celebrityActions: document.querySelector("#celebrity-actions"),
+  celebrityStartTurnButton: document.querySelector("#celebrity-start-turn-button"),
+  celebrityCorrectButton: document.querySelector("#celebrity-correct-button"),
+  celebritySkipButton: document.querySelector("#celebrity-skip-button"),
+  celebrityNextTurnButton: document.querySelector("#celebrity-next-turn-button"),
+  celebrityAnswer: document.querySelector("#celebrity-answer"),
+  celebrityGameStatus: document.querySelector("#celebrity-game-status"),
+  celebrityRestartButton: document.querySelector("#celebrity-restart-button"),
   roomShowAnswerButton: document.querySelector("#room-show-answer-button"),
   roomRoundAnswer: document.querySelector("#room-round-answer"),
   teamsSetup: document.querySelector("#teams-setup-screen"),
@@ -114,6 +139,24 @@ const TEAM_WHEEL_SEGMENTS = [
   { category: "تفكير", label: "تفكير", color: "#76513d" },
   { category: "تحدي", label: "تحدي", color: "#60402f" },
 ];
+const CELEBRITY_CARDS = [
+  { name: "أحمد حلمي", clues: ["ممثل مصري اشتهر بأدواره الكوميدية.", "شارك منى زكي بطولة أعمال فنية، وهما زوجان.", "من أفلامه «عسل أسود» و«إكس لارج»."] },
+  { name: "منى زكي", clues: ["ممثلة مصرية بدأت مشوارها الفني وهي صغيرة.", "قدمت أدوارًا في السينما والدراما والمسرح.", "زوجة الفنان أحمد حلمي."] },
+  { name: "محمد صلاح", clues: ["لاعب كرة قدم مصري احترف في أوروبا.", "لعب لليفربول الإنجليزي.", "لقبه المعروف بين جمهوره «الملك المصري»."] },
+  { name: "عمرو دياب", clues: ["مغنٍ مصري بدأ مشواره الفني في الثمانينيات.", "من أشهر أغانيه «تملي معاك».", "يُعرف بلقب «الهضبة»."] },
+  { name: "عادل إمام", clues: ["ممثل مصري قدّم أدوارًا في السينما والمسرح والتلفزيون.", "من أشهر أعماله مسرحية «مدرسة المشاغبين».", "يُعرف بلقب «الزعيم»."] },
+  { name: "شيرين عبد الوهاب", clues: ["مطربة مصرية اشتهرت بصوتها القوي.", "قدمت دويتو «لو كنت» مع فضل شاكر.", "من أغانيها «آه يا ليل»."] },
+  { name: "تامر حسني", clues: ["مطرب وممثل مصري.", "شارك في فيلم «عمر وسلمى».", "من أشهر ألقابه «نجم الجيل»."] },
+  { name: "أم كلثوم", clues: ["مطربة مصرية من أبرز الأصوات في تاريخ الموسيقى العربية.", "من أغانيها «أنت عمري» و«الأطلال».", "تُعرف بلقب «كوكب الشرق»."] },
+  { name: "محمد هنيدي", clues: ["ممثل مصري اشتهر بالكوميديا.", "من أفلامه «صعيدي في الجامعة الأمريكية».", "أدى شخصية رمضان مبروك أبو العلمين حمودة."] },
+  { name: "يسرا", clues: ["ممثلة مصرية لها أعمال كثيرة في السينما والتلفزيون.", "شاركت في عدد من أفلام عادل إمام.", "من أعمالها فيلم «رسائل البحر»."] },
+  { name: "كريم عبد العزيز", clues: ["ممثل مصري بدأ ظهوره في السينما وهو طفل.", "شارك في فيلم «الفيل الأزرق».", "والده المخرج محمد عبد العزيز."] },
+  { name: "إسماعيل ياسين", clues: ["فنان مصري لمع اسمه في الكوميديا.", "قدّم سلسلة أفلام حملت اسمه مثل «إسماعيل ياسين في الجيش».", "كان من أشهر نجوم الكوميديا في السينما المصرية."] },
+  { name: "محمود عبد العزيز", clues: ["ممثل مصري لُقّب بـ«الساحر».", "من أشهر أدواره رأفت الهجان.", "شارك في فيلم «الكيت كات»."] },
+  { name: "نجيب محفوظ", clues: ["كاتب وروائي مصري.", "من رواياته «الثلاثية» و«أولاد حارتنا».", "أول أديب عربي يحصل على جائزة نوبل في الأدب."] },
+  { name: "فيروز", clues: ["مطربة لبنانية من أشهر الأصوات العربية.", "ترتبط أغانيها بأجواء الصباح في العالم العربي.", "من أغانيها «نسم علينا الهوى»."] },
+  { name: "جورج وسوف", clues: ["مطرب سوري اشتهر بالأغاني الطربية.", "من أغانيه «كلام الناس».", "يُعرف بلقب «سلطان الطرب»."] },
+];
 const TEAM_WHEEL_SPIN_DURATION = 4200;
 const localPlayers = [];
 const teamPlayers = [];
@@ -125,6 +168,17 @@ let localRoundLimit = 5;
 let localSeenCardIds = new Set();
 let localCurrentCardCategory;
 let localCurrentAnswer;
+let localGameType = "cards";
+let celebrityRoundNumber = 0;
+let celebrityRoundLimit = 5;
+let celebrityScores = new Map();
+let celebritySeenCards = new Set();
+let celebrityCurrentCard;
+let celebrityCurrentPlayer;
+let celebrityTimerId;
+let celebritySecondsRemaining = 60;
+let celebrityHintNumber = 0;
+let celebrityDifficulty = "medium";
 let teamRoundNumber = 0;
 let teamRoundLimit = 5;
 let teamScores = [0, 0];
@@ -316,7 +370,21 @@ function renderLocalPlayers() {
   elements.localPlayerHint.textContent = ready
     ? `${new Intl.NumberFormat("ar-EG").format(localPlayers.length)} لاعبين جاهزين للعب.`
     : "ضيفوا لاعبين على الأقل عشان تبدأ اللعبة.";
-  elements.localStartButton.disabled = !ready || !supabase;
+  elements.localStartButton.disabled = !ready || (localGameType === "cards" && !supabase);
+}
+
+function setLocalGameType(type) {
+  localGameType = type;
+  const isCelebrityGame = type === "celebrity";
+  elements.local.classList.toggle("celebrity-setup", isCelebrityGame);
+  elements.celebrityDifficultyPicker.classList.toggle("hidden", !isCelebrityGame);
+  elements.localTitle.textContent = isCelebrityGame ? "مين هيلعب؟" : "من هيلعب؟";
+  elements.localDescription.textContent = isCelebrityGame
+    ? "ضيفوا أسماء اللاعبين، وخمنوا المشهور من التلميحات."
+    : "ضيف اسامي الناس الي هتلعب";
+  elements.localRoundLimitLabel.textContent = isCelebrityGame ? "عدد الأدوار (٦٠ ثانية لكل لاعب)" : "عدد الجولات";
+  elements.localStartButton.textContent = isCelebrityGame ? "ابدأوا لعبة مين ده؟ ←" : "يلا بينا نبداء ←";
+  renderLocalPlayers();
 }
 
 function addLocalPlayer(name) {
@@ -618,6 +686,175 @@ function startLocalGame() {
   elements.localNextButton.textContent = "السؤال اللي بعده ←";
   showScreen(elements.localGame);
   drawLocalCard();
+}
+
+function renderCelebrityScoreboard() {
+  elements.celebrityScoreboard.replaceChildren();
+  localPlayers.forEach((player, index) => {
+    const score = document.createElement("div");
+    score.className = `celebrity-score celebrity-score-${index % 5}`;
+    const name = document.createElement("span");
+    name.textContent = player;
+    const points = document.createElement("strong");
+    points.textContent = new Intl.NumberFormat("ar-EG").format(celebrityScores.get(player) || 0);
+    score.append(name, points);
+    elements.celebrityScoreboard.append(score);
+  });
+}
+
+function startCelebrityGame() {
+  if (localPlayers.length < 2) return;
+  clearInterval(celebrityTimerId);
+  celebrityRoundNumber = 0;
+  celebrityRoundLimit = Number(elements.localRoundLimit.value);
+  celebrityScores = new Map(localPlayers.map((player) => [player, 0]));
+  celebritySeenCards = new Set();
+  elements.celebrityRestartButton.classList.add("hidden");
+  renderCelebrityScoreboard();
+  showScreen(elements.celebrityGame);
+  startCelebrityTurn();
+}
+
+function drawCelebrityCard() {
+  const availableCards = CELEBRITY_CARDS.filter((card) => !celebritySeenCards.has(card.name));
+  if (!availableCards.length) celebritySeenCards.clear();
+  const refreshedCards = CELEBRITY_CARDS.filter((card) => !celebritySeenCards.has(card.name));
+  let nextCard = refreshedCards[Math.floor(Math.random() * refreshedCards.length)];
+  if (refreshedCards.length > 1 && nextCard.name === celebrityCurrentCard?.name) {
+    nextCard = refreshedCards.find((card) => card.name !== celebrityCurrentCard.name);
+  }
+  celebrityCurrentCard = nextCard;
+  celebritySeenCards.add(celebrityCurrentCard.name);
+  celebrityHintNumber = 0;
+  const timerIsRunning = elements.celebrityTimer.classList.contains("is-running");
+  elements.celebrityHintCard.classList.toggle("hidden", !timerIsRunning);
+  elements.celebrityNextHintButton.disabled = false;
+  elements.celebrityNextHintButton.textContent = "تلميح كمان";
+  if (timerIsRunning) {
+    celebrityHintNumber = 1;
+    elements.celebrityHint.textContent = celebrityCurrentCard.clues[0];
+    elements.celebrityNextHintButton.classList.toggle("hidden", celebrityCurrentCard.clues.length < 2);
+  } else {
+    elements.celebrityNextHintButton.classList.remove("hidden");
+  }
+  elements.celebrityAnswer.classList.add("hidden");
+  elements.celebrityAnswer.textContent = "";
+  elements.celebrityCorrectButton.textContent = "صح! +١";
+  elements.celebrityCorrectButton.classList.remove("hidden");
+  elements.celebritySkipButton.classList.remove("hidden");
+  elements.celebrityInstruction.textContent = "خمنوا اسم المشهور من الصورة! ممنوع تقولوا الاسم بصوت عالي.";
+}
+
+function startCelebrityTurn() {
+  clearInterval(celebrityTimerId);
+  celebrityRoundNumber += 1;
+  celebrityCurrentPlayer = localPlayers[(celebrityRoundNumber - 1) % localPlayers.length];
+  celebritySecondsRemaining = 60;
+  drawCelebrityCard();
+  elements.celebrityRoundLabel.textContent = `الجولة ${new Intl.NumberFormat("ar-EG").format(celebrityRoundNumber)} من ${new Intl.NumberFormat("ar-EG").format(celebrityRoundLimit)}`;
+  elements.celebrityTurn.textContent = `الدور على ${celebrityCurrentPlayer}`;
+  elements.celebrityHintCount.textContent = `المستوى: ${{ easy: "سهل", medium: "متوسط", hard: "صعب" }[celebrityDifficulty]} · كل إجابة صح بنقطة`;
+  elements.celebrityTimerValue.textContent = "٠١:٠٠";
+  elements.celebrityTimer.classList.remove("is-urgent");
+  elements.celebrityTimer.classList.remove("is-running");
+  elements.celebrityPortrait.className = `celebrity-portrait celebrity-portrait-hidden difficulty-${celebrityDifficulty}`;
+  elements.celebrityInstruction.textContent = "سلّموا الموبايل للاعب وخلوه على جبهته. الباقي يوصفوا الصورة من غير ما يقولوا الاسم!";
+  elements.celebrityStartTurnButton.classList.remove("hidden");
+  elements.celebrityCorrectButton.classList.add("hidden");
+  elements.celebritySkipButton.classList.add("hidden");
+  elements.celebrityNextTurnButton.classList.add("hidden");
+  elements.celebrityActions.classList.remove("hidden");
+  setFormStatus(elements.celebrityGameStatus, "", "info");
+}
+
+function formatCelebrityTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainder = seconds % 60;
+  return `${new Intl.NumberFormat("ar-EG", { minimumIntegerDigits: 2, useGrouping: false }).format(minutes)}:${new Intl.NumberFormat("ar-EG", { minimumIntegerDigits: 2, useGrouping: false }).format(remainder)}`;
+}
+
+function startCelebrityTimer() {
+  elements.celebrityPortrait.classList.remove("celebrity-portrait-hidden");
+  elements.celebrityHintCard.classList.remove("hidden");
+  celebrityHintNumber = 1;
+  elements.celebrityHint.textContent = celebrityCurrentCard.clues[0];
+  elements.celebrityNextHintButton.disabled = celebrityCurrentCard.clues.length < 2;
+  elements.celebrityNextHintButton.classList.toggle("hidden", celebrityCurrentCard.clues.length < 2);
+  elements.celebrityStartTurnButton.classList.add("hidden");
+  elements.celebrityTimer.classList.add("is-running");
+  elements.celebrityCorrectButton.classList.remove("hidden");
+  elements.celebritySkipButton.classList.remove("hidden");
+  elements.celebrityInstruction.textContent = "أول ما اللاعب يخمن صح اضغطوا «صح»، ولو معرفش الاسم اضغطوا «تخطي».";
+  celebrityTimerId = window.setInterval(() => {
+    celebritySecondsRemaining -= 1;
+    elements.celebrityTimerValue.textContent = formatCelebrityTime(celebritySecondsRemaining);
+    elements.celebrityTimer.classList.toggle("is-urgent", celebritySecondsRemaining <= 10);
+    if (celebritySecondsRemaining <= 0) finishCelebrityTurn();
+  }, 1000);
+}
+
+function showNextCelebrityHint() {
+  if (!celebrityCurrentCard || celebrityHintNumber >= celebrityCurrentCard.clues.length) return;
+  celebrityHintNumber += 1;
+  elements.celebrityHint.textContent = celebrityCurrentCard.clues[celebrityHintNumber - 1];
+  elements.celebrityNextHintButton.disabled = celebrityHintNumber >= celebrityCurrentCard.clues.length;
+  if (elements.celebrityNextHintButton.disabled) {
+    elements.celebrityNextHintButton.textContent = "خلصت التلميحات";
+  }
+}
+
+function finishCelebrityTurn() {
+  clearInterval(celebrityTimerId);
+  elements.celebrityTimer.classList.remove("is-running");
+  elements.celebrityTimer.classList.add("is-urgent");
+  elements.celebrityPortrait.classList.add("celebrity-portrait-hidden");
+  elements.celebrityHintCard.classList.add("hidden");
+  elements.celebrityAnswer.textContent = `الإجابة: ${celebrityCurrentCard.name}`;
+  elements.celebrityAnswer.classList.remove("hidden");
+  elements.celebrityInstruction.textContent = `انتهى دور ${celebrityCurrentPlayer}!`;
+  elements.celebrityCorrectButton.classList.add("hidden");
+  elements.celebritySkipButton.classList.add("hidden");
+  elements.celebrityNextTurnButton.textContent = celebrityRoundNumber >= celebrityRoundLimit
+    ? "اعرضوا النتيجة النهائية"
+    : "مرروا الموبايل للاعب التالي ←";
+  elements.celebrityNextTurnButton.classList.remove("hidden");
+  setFormStatus(elements.celebrityGameStatus, `جاب ${new Intl.NumberFormat("ar-EG").format(celebrityScores.get(celebrityCurrentPlayer))} نقطة في دوره.`, "info");
+}
+
+function markCelebrityGuess(correct) {
+  if (correct) {
+    celebrityScores.set(celebrityCurrentPlayer, celebrityScores.get(celebrityCurrentPlayer) + 1);
+    renderCelebrityScoreboard();
+    setFormStatus(elements.celebrityGameStatus, `إجابة صح! ${celebrityCurrentPlayer} +١`, "success");
+  } else {
+    setFormStatus(elements.celebrityGameStatus, "تم التخطي، جرّبوا اسمًا تانيًا.", "info");
+  }
+  drawCelebrityCard();
+}
+
+function finishCelebrityGame() {
+  clearInterval(celebrityTimerId);
+  const highestScore = Math.max(...celebrityScores.values());
+  const winners = [...celebrityScores]
+    .filter(([, score]) => score === highestScore)
+    .map(([player]) => player);
+  const winnerMessage = winners.length > 1
+    ? `تعادلوا: ${winners.join(" و")}، وكل واحد جاب ${new Intl.NumberFormat("ar-EG").format(highestScore)} نقطة!`
+    : `كسب ${winners[0]} بـ ${new Intl.NumberFormat("ar-EG").format(highestScore)} نقطة!`;
+
+  elements.celebrityRoundLabel.textContent = "انتهت اللعبة";
+  elements.celebrityTurn.textContent = "";
+  elements.celebrityActions.classList.add("hidden");
+  elements.celebrityRestartButton.classList.remove("hidden");
+  setFormStatus(elements.celebrityGameStatus, winnerMessage, "success");
+}
+
+function advanceCelebrityTurn() {
+  if (celebrityRoundNumber >= celebrityRoundLimit) {
+    finishCelebrityGame();
+    return;
+  }
+  startCelebrityTurn();
 }
 
 function getPresenceMembers(channel) {
@@ -1030,9 +1267,16 @@ document.querySelector("#show-join-button").addEventListener("click", () => {
   showScreen(elements.join);
 });
 document.querySelector("#mode-back-button").addEventListener("click", () => showScreen(elements.lobby));
-document.querySelector("#single-mode-button").addEventListener("click", () => showScreen(elements.local));
+document.querySelector("#single-mode-button").addEventListener("click", () => {
+  setLocalGameType("cards");
+  showScreen(elements.local);
+});
 document.querySelector("#room-mode-button").addEventListener("click", () => showScreen(elements.online));
 document.querySelector("#teams-mode-button").addEventListener("click", () => showScreen(elements.teamsSetup));
+document.querySelector("#celebrity-mode-button").addEventListener("click", () => {
+  setLocalGameType("celebrity");
+  showScreen(elements.local);
+});
 document.querySelector("#online-back-button").addEventListener("click", () => showScreen(elements.modes));
 document.querySelector("#online-create-button").addEventListener("click", () => {
   hostReturnScreen = elements.online;
@@ -1044,6 +1288,10 @@ document.querySelector("#online-join-button").addEventListener("click", () => {
 });
 document.querySelector("#local-back-button").addEventListener("click", () => showScreen(elements.modes));
 document.querySelector("#local-game-back-button").addEventListener("click", () => showScreen(elements.local));
+document.querySelector("#celebrity-game-back-button").addEventListener("click", () => {
+  clearInterval(celebrityTimerId);
+  showScreen(elements.local);
+});
 document.querySelector("#teams-setup-back-button").addEventListener("click", () => showScreen(elements.modes));
 document.querySelector("#teams-game-back-button").addEventListener("click", () => showScreen(elements.teamsSetup));
 elements.localPlayerForm.addEventListener("submit", (event) => {
@@ -1076,12 +1324,29 @@ elements.teamRestartButton.addEventListener("click", startTeamMatch);
 document.querySelectorAll('input[name="local-category"]').forEach((input) => {
   input.addEventListener("change", () => { localCategory = input.value; });
 });
-elements.localStartButton.addEventListener("click", startLocalGame);
+elements.localStartButton.addEventListener("click", () => {
+  if (localGameType === "celebrity") {
+    startCelebrityGame();
+    return;
+  }
+  startLocalGame();
+});
 elements.localShowAnswerButton.addEventListener("click", () => {
   revealCardAnswer(localCurrentCardCategory, localCurrentAnswer, elements.localRoundAnswer, elements.localShowAnswerButton);
 });
 elements.localNextButton.addEventListener("click", drawLocalCard);
 elements.localRestartButton.addEventListener("click", startLocalGame);
+document.querySelectorAll('input[name="celebrity-difficulty"]').forEach((input) => {
+  input.addEventListener("change", () => {
+    if (input.checked) celebrityDifficulty = input.value;
+  });
+});
+elements.celebrityStartTurnButton.addEventListener("click", startCelebrityTimer);
+elements.celebrityNextHintButton.addEventListener("click", showNextCelebrityHint);
+elements.celebrityCorrectButton.addEventListener("click", () => markCelebrityGuess(true));
+elements.celebritySkipButton.addEventListener("click", () => markCelebrityGuess(false));
+elements.celebrityNextTurnButton.addEventListener("click", advanceCelebrityTurn);
+elements.celebrityRestartButton.addEventListener("click", startCelebrityGame);
 elements.roomShowAnswerButton.addEventListener("click", () => {
   revealRoomAnswer();
 });
