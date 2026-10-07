@@ -142,6 +142,7 @@ const TEAM_WHEEL_SEGMENTS = [
   { category: "تحدي", label: "تحدي", color: "#60402f" },
 ];
 const CELEBRITY_CARDS = [
+  { name: "رحمه محسن", image: "https://s1.elaph.com/resources/images/Entertainment/2025/11/week1/e05a11fab9e1e88fad46951e3e912fba.jpg", clues: ["طلعت تريند فتره كبيرهو مازالت", "شاركت في مسلسل في رمضان", "مغنيه شعبي.مشهوره"] },
   { name: "أحمد حلمي", image: "https://cdn.arageek.com/magazine/2017/09/Ahmed-Helmy-1.jpg", clues: ["ممثل مصري اشتهر بأدواره الكوميدية.", "شارك منى زكي بطولة أعمال فنية، وهما زوجان.", "من أفلامه «عسل أسود» و«إكس لارج»."] },
   { name: "منى زكي", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/36/Mona_Zaki_2015.jpg/500px-Mona_Zaki_2015.jpg", clues: ["ممثلة مصرية بدأت مشوارها الفني وهي صغيرة.", "قدمت أدوارًا في السينما والدراما والمسرح.", "زوجة الفنان أحمد حلمي."] },
   { name: "محمد صلاح", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Mohamed_Salah_Argentina_v_Egypt_7_July_2026-163_%28cropped%29.jpg/500px-Mohamed_Salah_Argentina_v_Egypt_7_July_2026-163_%28cropped%29.jpg", clues: ["لاعب كرة قدم مصري احترف في أوروبا.", "لعب لليفربول الإنجليزي.", "لقبه المعروف بين جمهوره «الملك المصري»."] },
