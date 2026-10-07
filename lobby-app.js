@@ -72,6 +72,8 @@ const elements = {
   celebrityHintCard: document.querySelector("#celebrity-hint-card"),
   celebrityHint: document.querySelector("#celebrity-hint"),
   celebrityNextHintButton: document.querySelector("#celebrity-next-hint-button"),
+  celebrityPortraitImage: document.querySelector("#celebrity-portrait-image"),
+  celebrityPhotoCredit: document.querySelector("#celebrity-photo-credit"),
   celebrityScoreboard: document.querySelector("#celebrity-scoreboard"),
   celebrityActions: document.querySelector("#celebrity-actions"),
   celebrityStartTurnButton: document.querySelector("#celebrity-start-turn-button"),
@@ -140,22 +142,23 @@ const TEAM_WHEEL_SEGMENTS = [
   { category: "تحدي", label: "تحدي", color: "#60402f" },
 ];
 const CELEBRITY_CARDS = [
-  { name: "أحمد حلمي", clues: ["ممثل مصري اشتهر بأدواره الكوميدية.", "شارك منى زكي بطولة أعمال فنية، وهما زوجان.", "من أفلامه «عسل أسود» و«إكس لارج»."] },
-  { name: "منى زكي", clues: ["ممثلة مصرية بدأت مشوارها الفني وهي صغيرة.", "قدمت أدوارًا في السينما والدراما والمسرح.", "زوجة الفنان أحمد حلمي."] },
-  { name: "محمد صلاح", clues: ["لاعب كرة قدم مصري احترف في أوروبا.", "لعب لليفربول الإنجليزي.", "لقبه المعروف بين جمهوره «الملك المصري»."] },
-  { name: "عمرو دياب", clues: ["مغنٍ مصري بدأ مشواره الفني في الثمانينيات.", "من أشهر أغانيه «تملي معاك».", "يُعرف بلقب «الهضبة»."] },
-  { name: "عادل إمام", clues: ["ممثل مصري قدّم أدوارًا في السينما والمسرح والتلفزيون.", "من أشهر أعماله مسرحية «مدرسة المشاغبين».", "يُعرف بلقب «الزعيم»."] },
-  { name: "شيرين عبد الوهاب", clues: ["مطربة مصرية اشتهرت بصوتها القوي.", "قدمت دويتو «لو كنت» مع فضل شاكر.", "من أغانيها «آه يا ليل»."] },
-  { name: "تامر حسني", clues: ["مطرب وممثل مصري.", "شارك في فيلم «عمر وسلمى».", "من أشهر ألقابه «نجم الجيل»."] },
-  { name: "أم كلثوم", clues: ["مطربة مصرية من أبرز الأصوات في تاريخ الموسيقى العربية.", "من أغانيها «أنت عمري» و«الأطلال».", "تُعرف بلقب «كوكب الشرق»."] },
-  { name: "محمد هنيدي", clues: ["ممثل مصري اشتهر بالكوميديا.", "من أفلامه «صعيدي في الجامعة الأمريكية».", "أدى شخصية رمضان مبروك أبو العلمين حمودة."] },
-  { name: "يسرا", clues: ["ممثلة مصرية لها أعمال كثيرة في السينما والتلفزيون.", "شاركت في عدد من أفلام عادل إمام.", "من أعمالها فيلم «رسائل البحر»."] },
-  { name: "كريم عبد العزيز", clues: ["ممثل مصري بدأ ظهوره في السينما وهو طفل.", "شارك في فيلم «الفيل الأزرق».", "والده المخرج محمد عبد العزيز."] },
-  { name: "إسماعيل ياسين", clues: ["فنان مصري لمع اسمه في الكوميديا.", "قدّم سلسلة أفلام حملت اسمه مثل «إسماعيل ياسين في الجيش».", "كان من أشهر نجوم الكوميديا في السينما المصرية."] },
-  { name: "محمود عبد العزيز", clues: ["ممثل مصري لُقّب بـ«الساحر».", "من أشهر أدواره رأفت الهجان.", "شارك في فيلم «الكيت كات»."] },
-  { name: "نجيب محفوظ", clues: ["كاتب وروائي مصري.", "من رواياته «الثلاثية» و«أولاد حارتنا».", "أول أديب عربي يحصل على جائزة نوبل في الأدب."] },
-  { name: "فيروز", clues: ["مطربة لبنانية من أشهر الأصوات العربية.", "ترتبط أغانيها بأجواء الصباح في العالم العربي.", "من أغانيها «نسم علينا الهوى»."] },
-  { name: "جورج وسوف", clues: ["مطرب سوري اشتهر بالأغاني الطربية.", "من أغانيه «كلام الناس».", "يُعرف بلقب «سلطان الطرب»."] },
+  { name: "أحمد حلمي", image: "https://cdn.arageek.com/magazine/2017/09/Ahmed-Helmy-1.jpg", clues: ["ممثل مصري اشتهر بأدواره الكوميدية.", "شارك منى زكي بطولة أعمال فنية، وهما زوجان.", "من أفلامه «عسل أسود» و«إكس لارج»."] },
+  { name: "منى زكي", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/36/Mona_Zaki_2015.jpg/500px-Mona_Zaki_2015.jpg", clues: ["ممثلة مصرية بدأت مشوارها الفني وهي صغيرة.", "قدمت أدوارًا في السينما والدراما والمسرح.", "زوجة الفنان أحمد حلمي."] },
+  { name: "محمد صلاح", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Mohamed_Salah_Argentina_v_Egypt_7_July_2026-163_%28cropped%29.jpg/500px-Mohamed_Salah_Argentina_v_Egypt_7_July_2026-163_%28cropped%29.jpg", clues: ["لاعب كرة قدم مصري احترف في أوروبا.", "لعب لليفربول الإنجليزي.", "لقبه المعروف بين جمهوره «الملك المصري»."] },
+  { name: "عمرو دياب", image: "https://upload.wikimedia.org/wikipedia/commons/6/64/Amr_Diab_With_World_Music_Awards_%28cropped%29.jpg", clues: ["مغنٍ مصري بدأ مشواره الفني في الثمانينيات.", "من أشهر أغانيه «تملي معاك».", "يُعرف بلقب «الهضبة»."] },
+  { name: "عادل إمام", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Adel_Imam_2009_cropped.jpg/500px-Adel_Imam_2009_cropped.jpg", clues: ["ممثل مصري قدّم أدوارًا في السينما والمسرح والتلفزيون.", "من أشهر أعماله مسرحية «مدرسة المشاغبين».", "يُعرف بلقب «الزعيم»."] },
+  { name: "شيرين عبد الوهاب", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/%D8%B4%D9%8A%D8%B1%D9%8A%D9%86.jpg/500px-%D8%B4%D9%8A%D8%B1%D9%8A%D9%86.jpg", clues: ["مطربة مصرية اشتهرت بصوتها القوي.", "قدمت دويتو «لو كنت» مع فضل شاكر.", "من أغانيها «آه يا ليل»."] },
+  { name: "تامر حسني", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Tamer_Hosny%27s_NYE_Concert_%282025%29_%28cropped%29.png/500px-Tamer_Hosny%27s_NYE_Concert_%282025%29_%28cropped%29.png", clues: ["مطرب وممثل مصري.", "شارك في فيلم «عمر وسلمى».", "من أشهر ألقابه «نجم الجيل»."] },
+  { name: "أم كلثوم", image: "https://upload.wikimedia.org/wikipedia/commons/9/96/Umm_Kulthum_as_Fatimah.jpg", clues: ["مطربة مصرية من أبرز الأصوات في تاريخ الموسيقى العربية.", "من أغانيها «أنت عمري» و«الأطلال».", "تُعرف بلقب «كوكب الشرق»."] },
+  { name: "محمد هنيدي", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Mohamed_Henedy.png/500px-Mohamed_Henedy.png", clues: ["ممثل مصري اشتهر بالكوميديا.", "من أفلامه «صعيدي في الجامعة الأمريكية».", "أدى شخصية رمضان مبروك أبو العلمين حمودة."] },
+  { name: "يسرا", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Youssra_%28cropped%29.jpg/500px-Youssra_%28cropped%29.jpg", clues: ["ممثلة مصرية لها أعمال كثيرة في السينما والتلفزيون.", "شاركت في عدد من أفلام عادل إمام.", "من أعمالها فيلم «رسائل البحر»."] },
+  { name: "كريم عبد العزيز", image: "https://upload.wikimedia.org/wikipedia/commons/4/4a/%D9%83%D8%B1%D9%8A%D9%85_%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%B9%D8%B2%D9%8A%D8%B2.png", clues: ["ممثل مصري بدأ ظهوره في السينما وهو طفل.", "شارك في فيلم «الفيل الأزرق».", "والده المخرج محمد عبد العزيز."] },
+  { name: "إسماعيل ياسين", image: "https://upload.wikimedia.org/wikipedia/commons/2/22/Ismail_Yassin.jpg", clues: ["فنان مصري لمع اسمه في الكوميديا.", "قدّم سلسلة أفلام حملت اسمه مثل «إسماعيل ياسين في الجيش».", "كان من أشهر نجوم الكوميديا في السينما المصرية."] },
+  { name: "محمود عبد العزيز", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Mahmoud_Abdel_Aziz_%D8%A7%D9%84%D8%B3%D8%A7%D8%AD%D8%B1_%D9%85%D8%AD%D9%85%D9%88%D8%AF_%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%B9%D8%B2%D9%8A%D8%B2.jpg/500px-Mahmoud_Abdel_Aziz_%D8%A7%D9%84%D8%B3%D8%A7%D8%AD%D8%B1_%D9%85%D8%AD%D9%85%D9%88%D8%AF_%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%B9%D8%B2%D9%8A%D8%B2.jpg", clues: ["ممثل مصري لُقّب بـ«الساحر».", "من أشهر أدواره رأفت الهجان.", "شارك في فيلم «الكيت كات»."] },
+  { name: "نجيب محفوظ", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Naguib_Mahfouz_HR.jpg/500px-Naguib_Mahfouz_HR.jpg", clues: ["كاتب وروائي مصري.", "من رواياته «الثلاثية» و«أولاد حارتنا».", "أول أديب عربي يحصل على جائزة نوبل في الأدب."] },
+  { name: "فيروز", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Fairuz_1971.jpg/500px-Fairuz_1971.jpg", clues: ["مطربة لبنانية من أشهر الأصوات العربية.", "ترتبط أغانيها بأجواء الصباح في العالم العربي.", "من أغانيها «نسم علينا الهوى»."] },
+  { name: "جورج وسوف", image: "https://upload.wikimedia.org/wikipedia/commons/e/e9/George_Wassouf.jpg", clues: ["مطرب سوري اشتهر بالأغاني الطربية.", "من أغانيه «كلام الناس».", "يُعرف بلقب «سلطان الطرب»."] },
+  { name: "تامر الجيار", image: "https://yt3.googleusercontent.com/ytc/AIdro_mQAsn4usidMAmf8_liUmjs9yOMT4j2Zcb1TYwNZa8jVw=s160-c-k-c0x00ffffff-no-rj", clues: [" اتعملو اغنيه", " شارك في مسلسل و كان بسمو الحقيقي", " تيكتوكر مشهو ."] },
 ];
 const TEAM_WHEEL_SPIN_DURATION = 4200;
 const localPlayers = [];
@@ -702,6 +705,20 @@ function renderCelebrityScoreboard() {
   });
 }
 
+function getCelebrityPhotoCredit(imageUrl) {
+  const image = new URL(imageUrl);
+  if (image.hostname === "cdn.arageek.com") {
+    return { label: "Arageek", url: imageUrl };
+  }
+
+  const pathParts = image.pathname.split("/").filter(Boolean);
+  const fileName = decodeURIComponent(pathParts[image.pathname.includes("/thumb/") ? pathParts.length - 2 : pathParts.length - 1]);
+  return {
+    label: "Wikimedia Commons",
+    url: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(fileName)}`,
+  };
+}
+
 function startCelebrityGame() {
   if (localPlayers.length < 2) return;
   clearInterval(celebrityTimerId);
@@ -725,6 +742,13 @@ function drawCelebrityCard() {
   }
   celebrityCurrentCard = nextCard;
   celebritySeenCards.add(celebrityCurrentCard.name);
+  elements.celebrityPortrait.classList.remove("has-image");
+  elements.celebrityPortraitImage.hidden = false;
+  elements.celebrityPortraitImage.src = celebrityCurrentCard.image;
+  const photoCredit = getCelebrityPhotoCredit(celebrityCurrentCard.image);
+  elements.celebrityPhotoCredit.href = photoCredit.url;
+  elements.celebrityPhotoCredit.textContent = `مصدر الصورة: ${photoCredit.label}`;
+  elements.celebrityPhotoCredit.classList.add("hidden");
   celebrityHintNumber = 0;
   const timerIsRunning = elements.celebrityTimer.classList.contains("is-running");
   elements.celebrityHintCard.classList.toggle("hidden", !timerIsRunning);
@@ -1342,6 +1366,16 @@ document.querySelectorAll('input[name="celebrity-difficulty"]').forEach((input) 
   });
 });
 elements.celebrityStartTurnButton.addEventListener("click", startCelebrityTimer);
+elements.celebrityPortraitImage.addEventListener("load", () => {
+  elements.celebrityPortraitImage.hidden = false;
+  elements.celebrityPortrait.classList.add("has-image");
+  elements.celebrityPhotoCredit.classList.remove("hidden");
+});
+elements.celebrityPortraitImage.addEventListener("error", () => {
+  elements.celebrityPortraitImage.hidden = true;
+  elements.celebrityPortrait.classList.remove("has-image");
+  elements.celebrityPhotoCredit.classList.add("hidden");
+});
 elements.celebrityNextHintButton.addEventListener("click", showNextCelebrityHint);
 elements.celebrityCorrectButton.addEventListener("click", () => markCelebrityGuess(true));
 elements.celebritySkipButton.addEventListener("click", () => markCelebrityGuess(false));
