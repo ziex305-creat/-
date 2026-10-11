@@ -60,7 +60,9 @@ const elements = {
   localRoundAnswer: document.querySelector("#local-round-answer"),
   localGameStatus: document.querySelector("#local-game-status"),
   localNextButton: document.querySelector("#local-next-button"),
+  localFinishActions: document.querySelector("#local-finish-actions"),
   localRestartButton: document.querySelector("#local-restart-button"),
+  localLobbyButton: document.querySelector("#local-lobby-button"),
   celebrityGame: document.querySelector("#celebrity-game-screen"),
   celebrityRoundLabel: document.querySelector("#celebrity-round-label"),
   celebrityTurn: document.querySelector("#celebrity-turn"),
@@ -73,7 +75,6 @@ const elements = {
   celebrityHint: document.querySelector("#celebrity-hint"),
   celebrityNextHintButton: document.querySelector("#celebrity-next-hint-button"),
   celebrityPortraitImage: document.querySelector("#celebrity-portrait-image"),
-  celebrityPhotoCredit: document.querySelector("#celebrity-photo-credit"),
   celebrityScoreboard: document.querySelector("#celebrity-scoreboard"),
   celebrityActions: document.querySelector("#celebrity-actions"),
   celebrityStartTurnButton: document.querySelector("#celebrity-start-turn-button"),
@@ -160,7 +161,83 @@ const CELEBRITY_CARDS = [
   { name: "فيروز", image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Fairuz_1971.jpg/500px-Fairuz_1971.jpg", clues: ["مطربة لبنانية من أشهر الأصوات العربية.", "ترتبط أغانيها بأجواء الصباح في العالم العربي.", "من أغانيها «نسم علينا الهوى»."] },
   { name: "جورج وسوف", image: "https://upload.wikimedia.org/wikipedia/commons/e/e9/George_Wassouf.jpg", clues: ["مطرب سوري اشتهر بالأغاني الطربية.", "من أغانيه «كلام الناس».", "يُعرف بلقب «سلطان الطرب»."] },
   { name: "تامر الجيار", image: "https://yt3.googleusercontent.com/ytc/AIdro_mQAsn4usidMAmf8_liUmjs9yOMT4j2Zcb1TYwNZa8jVw=s160-c-k-c0x00ffffff-no-rj", clues: [" اتعملو اغنيه", " شارك في مسلسل و كان بسمو الحقيقي", " تيكتوكر مشهو ."] },
+  { name: "علي ربيع", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1WF4NeoMQIJ7Si0a6BrKS30SLc4ZsrEJUUnEYb6bLSg&s=10", clues: ["ممثل مصري", "شارك في مسرح مصر", ""] },
+  { name: "طه دسوقي", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgnoLwuQz2DlgXqqaoduoaUwv2F-BeGGLNv7QqjJi669m0VKvZDCWxn4s&s=10", clues: ["ممثل مصري", "كوميدي", "بيعمل استانداب كوميدي"] },
+  { name: "ياسمين صبري", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHDBzOytQ1PDPW42dlntdtBjwM_ECrb9U7fymo4CEnLA&s=10", clues: ["ممثلة مصريه", "شاركت في مسلسل"] },
+  { name: "محمد امام", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ92C1vtouuUS5oOomMz2NvHl_EKmMR1Omwqn8xibigJw&s=10", clues: ["ممثل مصري", "كوميدي و اكشن", " ابن ممثل مشهور"] },
+  { name: "اوس اوس", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgF1cfWhOOuNDLtk9cI05L74_y8e98CQp2OK-CgJI4rg&s=10", clues: ["ممثل مصري", "كوميدي", " شارك في مسرح مصر"] },
+  { name: "حمو بيكا", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZIZNzrtZJZ2zzu-HGVxJ9E9T7JGwoO0IWatgnCY7KdQ&s=10", clues: ["مغني شعبي", "مشهور و محبوب"] },
+  { name: "حمو الطيخا", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMXkTDkwbo964Dx17RiKei-UoHPAbGEcLMMtmOJ5tLnQ&s", clues: ["مغني شعبي", "مشهور و محبوب", "مش جديد قديم"] },
+  { name: "حمو المرشيدي", image: "https://www.vetogate.com/UploadCache/libfiles/594/6/800x450o/398.png", clues: ["مغني شعبي", "مشهور و محبوب", " جديد مش قديم"] },
+  { name: "شواحه", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmrd0eY2zLMWvT8_7oqiE-LsUke3I8DT_QSkd_9SIrPQ&s=10", clues: ["مغني شعبي ", "مشهور", "قديم "] },
+  { name: "تامر عاشور", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzfV8yzsrKGEUAyxb9QRxHhexsBPs6_NwIT-5mvBJ2VQ&s=10", clues: ["مغني ", "حزين و رمانسي", "قديم مش جديد"] },
+  { name: "بهاء سلطان", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRokMxlyR__YC3WtJ0M8GySYk7nyjxnE8ySGPICLdBmwQ&s=10", clues: ["مغني", "مشهور", "قديم "] },
+  { name: "مروان ببلو", image: "https://i.scdn.co/image/ab6761610000e5eb7b72508876857baead00c0d5", clues: ["مغني راب", "مشهور", "قديم "] },
+  { name: "ويجز", image: "https://yt3.googleusercontent.com/nAoVD7ZAy08bqajW8V4o4t0tdYgRakd_jrwaBa_MkKi4K8HGShqOy0Vi0uezjsPH67dKPEXfxQU=s900-c-k-c0x00ffffff-no-rj", clues: ["مغني راب", " مشهور", "ثديم"] },
+  { name: "انغام", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZzIU84fJttaEnmtOLiLIh3TOMSBMhtw4rN3tih7UToA&s=10", clues: ["مغنيه", " مشهوره", "قديمه و محبوبه"] },
+  { name: "اصاله", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdJTEyz8S5SK_XV9_ahT2h4GhaBlzj4VJE5hSAwsKxV1SjdQkoUDRb1xw&s=10", clues: ["مغنيه", "مشهوره", "قديمه و محبوبه"] },
+  { name: "محشي", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMs90Id3NhtEFGh6ODefzpTWzAqdyxntViOAejqpsMsA&s=10", clues: ["اكله", "مصريه مشهوره", "محبوبه"] },
+  { name: "كريب", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRfvv_08Aubs-o3IsS_kehjp__Xwq3koMRifOUyBw2Nw&s=10", clues: ["اكله", "مشهوره", "من مكونتها دقيق"] },
+  { name: "اندومي", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuHA2DeUugbAvQOEyYn-YLJZ_Cz7MFwetG8sCKxlHOVQ&s=10", clues: ["اكله سريعه", "مشهور", "من مكونتها المكرونه"] },
+  { name: "نسر", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqzFcLLRhB1DgjNVv88rPd1ANDC5jguwNLHg_CPDst4g&s=10", clues: ["حيوان", "بيطير", "معروف"] },
+  { name: "فيل", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRE31lUbqVDKNJFlEmSQC5XRm4KvglkqmTYVksYKZAIEQ&s=10", clues: ["حيوان", "ضخم", "مشهور"] },
+  { name: "قطه", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQODf9dzCvlCAyDwoTgEndKmC9vECmZtMKWwGpKoV8Gfg&s=10", clues: ["حيوان", " اليفه", "ممكن تربيها"] },
+  { name: "حصان", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3rgJxAx8PHKj6OoOM9DvMq1Z4mgWxT-CmHj0_4Apbcg&s=10", clues: ["حيوان", " سريع", "ممكن تربيها"] },
+  { name: "رمز جلال", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuk9JQkkgnERf8prES_tWcLbjlSLE5woPOOlCoT3uwyA&s=10", clues: [" كوميدي", "ممثل مشهور", "بيعمل برنامج مقالب"], difficulty: "medium" },
+  { name: "عادل امام", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHGGzdlApB33wgA1Lsg6zo36uuB3LT2eyjmqC07Vk-gQ&s=10", clues: [" عمل افلام و مسلسلات و مسرحيات كتير", "ممثل مشهور", "الزعيم"], difficulty: "easy" },
+  { name: "طلعت زكريا", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8IMa7eF8ZtwPu9a7qrZOaSG8gH05wanKkTk57hsaNZA&s=10", clues: ["", "كوميدي", "ممثل مشهور"], difficulty: "medium" },
+  { name: "غبي منه فيه(هاني رمزي)", image: "https://vid.alarabiya.net/images/2025/10/27/8f98157f-b2f5-4cb0-8621-154abc10aee1/8f98157f-b2f5-4cb0-8621-154abc10aee1_16x9_1200x676.jpg", clues: ["", "ده مش طبق كشري ده محل كشري", "ممثل مشهور"], difficulty: "hard" },
+  { name: "احمد مكي", image: "https://vid.alarabiya.net/images/2024/08/30/51323bfe-3ae2-4d4d-9587-0a04d6ddb1a7/51323bfe-3ae2-4d4d-9587-0a04d6ddb1a7_16x9_1200x676.jpg", clues: ["", "كوميدي", "ممثل محبوب و مشهور"], difficulty: "easy" },
+  { name: "احمد العوضي", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVP4Jr9d8w4m7S4O9wknGEWuge_x-bLx-zvF15JRmlGA&s=10", clues: ["ممثل مصري", "مشهور", "مش كوميدي"], difficulty: "medium" },
+  { name: "اشرف عبد الباقي", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjBuQgZMAfcqPKCer6ZgNXxGdR1w6wblqWJnpCCbvcHQ&s=10", clues: ["ممثل كبير ", "عنده مطعم مشهور", "كوميدي"], difficulty: "medium" },
+  { name: "محمد رمضان", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW1LcouCzcCeU_4OzmWeApGLr4w2udywC9dg307eSE2w&s=10", clues: ["ممثل مصري", "عمل صعيدي كتير", ""], difficulty: "easy" },
+  { name: "مجدي الزهار", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcRB0Tz2-J1FWYkASuQnNIBkzXJhXVAjw41y2wvtkvYQ&s=10", clues: ["مغني شعبي", "", " "], difficulty: "easy" },
+  { name: "احمد موزه", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkl7wI_BIRC3rjp9qK4ty0g1AOxb0XjWTKESrkrVwsJQ&s=10", clues: ["مغني شعبي", "مشهور", "قديم"], difficulty: "easy" },
+  { name: "منجا", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIrmXPbtYkRmp6Xd_pDj7R3ZinNC-52qGDbleNQ2YxtQ&s=10", clues: ["", "", ""], difficulty: "hard" },
+  { name: "عنبه", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvkpDKSDSC0LTh98-PxhEq0dzo6lHW3t53xNEQefY14w&s", clues: ["مغني مشهور", " ", " "], difficulty: "hard" },
+  { name: "احمد شيبه", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMoT3HDlnPewNQ84pcV-DKx1VLhytgLvqMMGr2lkwUaA&s=10", clues: ["مغني شعبي", " ", " "], difficulty: "hard" },
+  { name: "احمد سعد", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFcIZYA0W9P0S7yVnk8l-IMoFGqKDTYaHtO-CM6GY9Cw&s=10", clues: ["مغني", " ", " "], difficulty: "easy" },
+  { name: "مايكل جاكسون الغلابه", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrv4uhJvwB-m5cPjU-K--7RUuNzhmTrXYYGLkN5c7RkkbtjD1fCI8DOOUC&s=10", clues: ["", " ", " "], difficulty: "hard" },
+  
+
+
+  
 ];
+const CELEBRITY_CARD_DIFFICULTY = new Map([
+  ["رحمه محسن", "easy"],
+  ["هدير عبد الرازق", "easy"],
+  ["اوتاكا", "easy"],
+  ["محمد صلاح", "easy"],
+  ["عمرو دياب", "easy"],
+  ["محمد هنيدي", "easy"],
+  ["نجيب محفوظ", "easy"],
+  ["فيروز", "easy"],
+  ["جورج وسوف", "easy"],
+  ["تامر الجيار", "medium"],
+  ["كروان مشاكل", "medium"],
+  ["عمر فرج", "medium"],
+  ["ياسمين صبري", "medium"],
+  ["محمد امام", "medium"],
+  ["اوس اوس", "medium"],
+  ["حمو بيكا", "medium"],
+  ["حمو الطيخا", "medium"],
+  ["حمو المرشيدي", "medium"],
+  ["علي ربيع", "hard"],
+  ["طه دسوقي", "hard"],
+  ["إسماعيل ياسين", "hard"],
+  ["عريس الجنه", "hard"],
+  ["حمار", "hard"],
+  ["حواوشي", "hard"],
+  ["حمامه", "hard"],
+  ["فرخه", "hard"],
+  ["أونر", "hard"],
+  ["كريب", "hard"],
+  ["اندومي", "hard"],
+  ["نسر", "hard"],
+  ["فيل", "hard"],
+  ["قطه", "hard"],
+  ["حصان", "hard"],
+]);
 const TEAM_WHEEL_SPIN_DURATION = 4200;
 const localPlayers = [];
 const teamPlayers = [];
@@ -183,6 +260,7 @@ let celebrityTimerId;
 let celebritySecondsRemaining = 60;
 let celebrityHintNumber = 0;
 let celebrityDifficulty = "medium";
+let lobbyReturnTimerId;
 let teamRoundNumber = 0;
 let teamRoundLimit = 5;
 let teamScores = [0, 0];
@@ -202,6 +280,16 @@ const preferences = { theme: "dark", musicEnabled: true, musicVolume: 0.35 };
 function showScreen(screen) {
   document.querySelectorAll(".screen").forEach((item) => item.classList.add("hidden"));
   screen.classList.remove("hidden");
+}
+
+function scheduleLobbyReturn() {
+  if (lobbyReturnTimerId) {
+    window.clearTimeout(lobbyReturnTimerId);
+  }
+  lobbyReturnTimerId = window.setTimeout(() => {
+    lobbyReturnTimerId = null;
+    showScreen(elements.lobby);
+  }, 2500);
 }
 
 function applyTheme() {
@@ -571,6 +659,7 @@ function finishTeamMatch() {
     elements.teamWinnerMessage.textContent = "الفريق الفائز يختار تحديًا للفريق الخسران.";
     elements.teamDrawChallengeButton.classList.remove("hidden");
   }
+  scheduleLobbyReturn();
 }
 
 async function advanceTeamRound(correct) {
@@ -606,6 +695,10 @@ async function drawTeamPenaltyChallenge() {
 }
 
 async function startTeamMatch() {
+  if (lobbyReturnTimerId) {
+    window.clearTimeout(lobbyReturnTimerId);
+    lobbyReturnTimerId = null;
+  }
   teamRoundLimit = Number(elements.teamRoundLimit.value);
   teamRoundNumber = 0;
   teamScores = [0, 0];
@@ -672,21 +765,26 @@ function finishLocalGame() {
   elements.localRoundLabel.textContent = "انتهت اللعبة";
   elements.localRoundTurn.textContent = "";
   elements.localNextButton.classList.add("hidden");
-  elements.localRestartButton.classList.remove("hidden");
+  elements.localFinishActions.classList.remove("hidden");
   setFormStatus(
     elements.localGameStatus,
     `خلصتوا ${new Intl.NumberFormat("ar-EG").format(localRoundLimit)} جولات. شكرًا على اللمة!`,
     "success",
   );
+  scheduleLobbyReturn();
 }
 
 function startLocalGame() {
   if (localPlayers.length < 2 || !supabase) return;
+  if (lobbyReturnTimerId) {
+    window.clearTimeout(lobbyReturnTimerId);
+    lobbyReturnTimerId = null;
+  }
   localRoundNumber = 0;
   localRoundLimit = Number(elements.localRoundLimit.value);
   localSeenCardIds = new Set();
   elements.localNextButton.classList.remove("hidden");
-  elements.localRestartButton.classList.add("hidden");
+  elements.localFinishActions.classList.add("hidden");
   elements.localNextButton.textContent = "السؤال اللي بعده ←";
   showScreen(elements.localGame);
   drawLocalCard();
@@ -706,22 +804,12 @@ function renderCelebrityScoreboard() {
   });
 }
 
-function getCelebrityPhotoCredit(imageUrl) {
-  const image = new URL(imageUrl);
-  if (image.hostname === "cdn.arageek.com") {
-    return { label: "Arageek", url: imageUrl };
-  }
-
-  const pathParts = image.pathname.split("/").filter(Boolean);
-  const fileName = decodeURIComponent(pathParts[image.pathname.includes("/thumb/") ? pathParts.length - 2 : pathParts.length - 1]);
-  return {
-    label: "Wikimedia Commons",
-    url: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(fileName)}`,
-  };
-}
-
 function startCelebrityGame() {
   if (localPlayers.length < 2) return;
+  if (lobbyReturnTimerId) {
+    window.clearTimeout(lobbyReturnTimerId);
+    lobbyReturnTimerId = null;
+  }
   clearInterval(celebrityTimerId);
   celebrityRoundNumber = 0;
   celebrityRoundLimit = Number(elements.localRoundLimit.value);
@@ -734,22 +822,25 @@ function startCelebrityGame() {
 }
 
 function drawCelebrityCard() {
-  const availableCards = CELEBRITY_CARDS.filter((card) => !celebritySeenCards.has(card.name));
-  if (!availableCards.length) celebritySeenCards.clear();
-  const refreshedCards = CELEBRITY_CARDS.filter((card) => !celebritySeenCards.has(card.name));
+  const difficultyCards = CELEBRITY_CARDS.filter((card) => (card.difficulty ?? "medium") === celebrityDifficulty);
+  const poolCards = difficultyCards.length ? difficultyCards : CELEBRITY_CARDS;
+  if (!poolCards.some((card) => !celebritySeenCards.has(card.name))) celebritySeenCards.clear();
+  const refreshedCards = poolCards.filter((card) => !celebritySeenCards.has(card.name));
   let nextCard = refreshedCards[Math.floor(Math.random() * refreshedCards.length)];
   if (refreshedCards.length > 1 && nextCard.name === celebrityCurrentCard?.name) {
     nextCard = refreshedCards.find((card) => card.name !== celebrityCurrentCard.name);
   }
   celebrityCurrentCard = nextCard;
   celebritySeenCards.add(celebrityCurrentCard.name);
-  elements.celebrityPortrait.classList.remove("has-image");
-  elements.celebrityPortraitImage.hidden = false;
-  elements.celebrityPortraitImage.src = celebrityCurrentCard.image;
-  const photoCredit = getCelebrityPhotoCredit(celebrityCurrentCard.image);
-  elements.celebrityPhotoCredit.href = photoCredit.url;
-  elements.celebrityPhotoCredit.textContent = `مصدر الصورة: ${photoCredit.label}`;
-  elements.celebrityPhotoCredit.classList.add("hidden");
+
+  if (elements.celebrityPortrait) {
+    elements.celebrityPortrait.classList.remove("has-image");
+  }
+  if (elements.celebrityPortraitImage) {
+    elements.celebrityPortraitImage.hidden = false;
+    elements.celebrityPortraitImage.src = celebrityCurrentCard.image;
+  }
+
   celebrityHintNumber = 0;
   const timerIsRunning = elements.celebrityTimer.classList.contains("is-running");
   elements.celebrityHintCard.classList.toggle("hidden", !timerIsRunning);
@@ -872,6 +963,7 @@ function finishCelebrityGame() {
   elements.celebrityActions.classList.add("hidden");
   elements.celebrityRestartButton.classList.remove("hidden");
   setFormStatus(elements.celebrityGameStatus, winnerMessage, "success");
+  scheduleLobbyReturn();
 }
 
 function advanceCelebrityTurn() {
@@ -1361,6 +1453,13 @@ elements.localShowAnswerButton.addEventListener("click", () => {
 });
 elements.localNextButton.addEventListener("click", drawLocalCard);
 elements.localRestartButton.addEventListener("click", startLocalGame);
+elements.localLobbyButton.addEventListener("click", () => {
+  if (lobbyReturnTimerId) {
+    window.clearTimeout(lobbyReturnTimerId);
+    lobbyReturnTimerId = null;
+  }
+  showScreen(elements.lobby);
+});
 document.querySelectorAll('input[name="celebrity-difficulty"]').forEach((input) => {
   input.addEventListener("change", () => {
     if (input.checked) celebrityDifficulty = input.value;
@@ -1369,13 +1468,15 @@ document.querySelectorAll('input[name="celebrity-difficulty"]').forEach((input) 
 elements.celebrityStartTurnButton.addEventListener("click", startCelebrityTimer);
 elements.celebrityPortraitImage.addEventListener("load", () => {
   elements.celebrityPortraitImage.hidden = false;
-  elements.celebrityPortrait.classList.add("has-image");
-  elements.celebrityPhotoCredit.classList.remove("hidden");
+  if (elements.celebrityPortrait) {
+    elements.celebrityPortrait.classList.add("has-image");
+  }
 });
 elements.celebrityPortraitImage.addEventListener("error", () => {
   elements.celebrityPortraitImage.hidden = true;
-  elements.celebrityPortrait.classList.remove("has-image");
-  elements.celebrityPhotoCredit.classList.add("hidden");
+  if (elements.celebrityPortrait) {
+    elements.celebrityPortrait.classList.remove("has-image");
+  }
 });
 elements.celebrityNextHintButton.addEventListener("click", showNextCelebrityHint);
 elements.celebrityCorrectButton.addEventListener("click", () => markCelebrityGuess(true));

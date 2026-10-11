@@ -1585,6 +1585,19 @@ button {
   right: 68px;
 }
 
+.local-finish-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.lobby-return-button {
+  min-height: 54px;
+  border-radius: 12px;
+  box-shadow: 0 14px 34px rgb(217 142 55 / 18%);
+  font-size: 15px;
+}
+
 .online-actions {
   display: grid;
   gap: 11px;
@@ -2215,25 +2228,9 @@ button {
   opacity: 0.58;
 }
 
-.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-easy .celebrity-portrait-image {
-  filter: blur(0);
-}
-
-.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-medium .celebrity-portrait-image {
-  filter: blur(3px);
-}
-
-.celebrity-portrait:not(.celebrity-portrait-hidden).difficulty-hard .celebrity-portrait-image {
-  filter: blur(7px);
-}
-
-.celebrity-photo-credit {
-  display: inline-block;
-  margin-top: -3px;
-  color: var(--muted);
-  font-size: 9px;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+.celebrity-portrait:not(.celebrity-portrait-hidden) .celebrity-portrait-image {
+  filter: none;
+  opacity: 1;
 }
 
 .celebrity-portrait-hair,
