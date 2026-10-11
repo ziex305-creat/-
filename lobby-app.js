@@ -288,7 +288,7 @@ function scheduleLobbyReturn() {
   }
   lobbyReturnTimerId = window.setTimeout(() => {
     lobbyReturnTimerId = null;
-    showScreen(elements.lobby);
+    showScreen(elements.modes);
   }, 2500);
 }
 
@@ -1458,7 +1458,7 @@ elements.localLobbyButton.addEventListener("click", () => {
     window.clearTimeout(lobbyReturnTimerId);
     lobbyReturnTimerId = null;
   }
-  showScreen(elements.lobby);
+  showScreen(elements.modes);
 });
 document.querySelectorAll('input[name="celebrity-difficulty"]').forEach((input) => {
   input.addEventListener("change", () => {
